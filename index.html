@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор Себестоимости Швейного Цеха</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            animation: slideUp 0.6s ease;
+        }
+
+        .card-header {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2d3748;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-field label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+
+        .input-field input {
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .input-field input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .materials-table, .operations-table, .admin-table {
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .materials-table th, .operations-table th, .admin-table th {
+            background: #f7fafc;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #2d3748;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .materials-table td, .operations-table td, .admin-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .materials-table input, .operations-table input, .admin-table input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .btn-add {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn-remove {
+            background: #f56565;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .results {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            animation: slideUp 0.8s ease;
+        }
+
+        .results h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .result-item {
+            background: rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .final-price {
+            background: rgba(255,255,255,0.25);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .final-price .label {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            opacity: 0.95;
+        }
+
+        .final-price .value {
+            font-size: 3rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .save-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin: 20px auto;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .input-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Калькулятор Себестоимости</h1>
+            <p>Простой расчёт для швейного производства</p>
+        </div>
+
+        <!-- Основные параметры -->
+        <div class="card">
+            <div class="card-header">⚙️ Основные Параметры</div>
+            <div class="input-group">
+                <div class="input-field">
+                    <label>Название изделия</label>
+                    <input type="text" id="productName" value="Песочник детский">
+                </div>
+                <div class="input-field">
+                    <label>Количество изделий в месяц</label>
+                    <input type="number" id="monthlyQuantity" value="4500" oninput="calculate()">
+                </div>
+                <div class="input-field">
+                    <label>Желаемая маржа (%)</label>
+                    <input type="number" id="marginPercent" value="20" oninput="calculate()">
+                </div>
+                <div class="input-field">
+                    <label>Курс доллара (сом)</label>
+                    <input type="number" id="usdRate" value="87.8" step="0.1" oninput="calculate()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Материалы -->
+        <div class="card">
+            <div class="card-header">🧵 Материалы и Сырьё</div>
+            <table class="materials-table">
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Название</th>
+                        <th style="width: 15%">Расход</th>
+                        <th style="width: 15%">Ед.изм.</th>
+                        <th style="width: 15%">Цена</th>
+                        <th style="width: 10%">В USD?</th>
+                        <th style="width: 15%">Сумма</th>
+                        <th style="width: 5%"></th>
+                    </tr>
+                </thead>
+                <tbody id="materialsTable">
+                    <tr>
+                        <td><input type="text" value="Ткань основная" oninput="calculate()"></td>
+                        <td><input type="number" value="2.3" step="0.1" oninput="calculate()"></td>
+                        <td><input type="text" value="м"></td>
+                        <td><input type="number" value="2.0" step="0.1" oninput="calculate()"></td>
+                        <td><input type="checkbox" checked onchange="calculate()"></td>
+                        <td><span class="material-sum">403.48</span></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'materialsTable')">✕</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Упаковочный пакет" oninput="calculate()"></td>
+                        <td><input type="number" value="1" step="0.1" oninput="calculate()"></td>
+                        <td><input type="text" value="шт"></td>
+                        <td><input type="number" value="5" step="0.1" oninput="calculate()"></td>
+                        <td><input type="checkbox" onchange="calculate()"></td>
+                        <td><span class="material-sum">5.00</span></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'materialsTable')">✕</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Нитки" oninput="calculate()"></td>
+                        <td><input type="number" value="1" step="0.1" oninput="calculate()"></td>
+                        <td><input type="text" value="шт"></td>
+                        <td><input type="number" value="1" step="0.1" oninput="calculate()"></td>
+                        <td><input type="checkbox" onchange="calculate()"></td>
+                        <td><span class="material-sum">1.00</span></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'materialsTable')">✕</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Резинка" oninput="calculate()"></td>
+                        <td><input type="number" value="1" step="0.1" oninput="calculate()"></td>
+                        <td><input type="text" value="м"></td>
+                        <td><input type="number" value="3" step="0.1" oninput="calculate()"></td>
+                        <td><input type="checkbox" onchange="calculate()"></td>
+                        <td><span class="material-sum">3.00</span></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'materialsTable')">✕</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Бирка" oninput="calculate()"></td>
+                        <td><input type="number" value="1" step="0.1" oninput="calculate()"></td>
+                        <td><input type="text" value="шт"></td>
+                        <td><input type="number" value="2" step="0.1" oninput="calculate()"></td>
+                        <td><input type="checkbox" onchange="calculate()"></td>
+                        <td><span class="material-sum">2.00</span></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'materialsTable')">✕</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn-add" onclick="addMaterialRow()">➕ Добавить материал</button>
+        </div>
+
+        <!-- Сдельные работы -->
+        <div class="card">
+            <div class="card-header">✂️ Сдельные Работы</div>
+            <table class="operations-table">
+                <thead>
+                    <tr>
+                        <th style="width: 70%">Операция</th>
+                        <th style="width: 25%">Стоимость (сом)</th>
+                        <th style="width: 5%"></th>
+                    </tr>
+                </thead>
+                <tbody id="operationsTable">
+                    <tr>
+                        <td><input type="text" value="Прямострочка" oninput="calculate()"></td>
+                        <td><input type="number" value="65" step="0.1" oninput="calculate()"></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'operationsTable')">✕</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Крой" oninput="calculate()"></td>
+                        <td><input type="number" value="10" step="0.1" oninput="calculate()"></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'operationsTable')">✕</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Чистка" oninput="calculate()"></td>
+                        <td><input type="number" value="2" step="0.1" oninput="calculate()"></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'operationsTable')">✕</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Упаковка" oninput="calculate()"></td>
+                        <td><input type="number" value="4" step="0.1" oninput="calculate()"></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'operationsTable')">✕</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="ОТК" oninput="calculate()"></td>
+                        <td><input type="number" value="3" step="0.1" oninput="calculate()"></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'operationsTable')">✕</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn-add" onclick="addOperationRow()">➕ Добавить операцию</button>
+        </div>
+
+        <!-- Административные расходы -->
+        <div class="card">
+            <div class="card-header">🏢 Административные Расходы (в месяц)</div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th style="width: 70%">Статья расходов</th>
+                        <th style="width: 25%">Сумма (сом/месяц)</th>
+                        <th style="width: 5%"></th>
+                    </tr>
+                </thead>
+                <tbody id="adminTable">
+                    <tr>
+                        <td><input type="text" value="Оклады" oninput="calculate()"></td>
+                        <td><input type="number" value="245000" step="100" oninput="calculate()"></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'adminTable')">✕</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Аренда" oninput="calculate()"></td>
+                        <td><input type="number" value="50000" step="100" oninput="calculate()"></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'adminTable')">✕</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Коммуналка" oninput="calculate()"></td>
+                        <td><input type="number" value="10000" step="100" oninput="calculate()"></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'adminTable')">✕</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Бензин" oninput="calculate()"></td>
+                        <td><input type="number" value="15000" step="100" oninput="calculate()"></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'adminTable')">✕</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Доставка/Такси" oninput="calculate()"></td>
+                        <td><input type="number" value="2000" step="100" oninput="calculate()"></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'adminTable')">✕</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Маркетинг" oninput="calculate()"></td>
+                        <td><input type="number" value="90000" step="100" oninput="calculate()"></td>
+                        <td><button class="btn-remove" onclick="removeRow(this, 'adminTable')">✕</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn-add" onclick="addAdminRow()">➕ Добавить статью расходов</button>
+        </div>
+
+        <!-- Результаты -->
+        <div class="results">
+            <h2>📊 Результаты Расчёта</h2>
+            <div class="result-grid">
+                <div class="result-item">
+                    <div class="result-label">Материалы на 1 шт:</div>
+                    <div class="result-value" id="resultMaterials">0 сом</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Сдельные работы:</div>
+                    <div class="result-value" id="resultOperations">0 сом</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Админ расходы на 1 шт:</div>
+                    <div class="result-value" id="resultAdmin">0 сом</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Себестоимость:</div>
+                    <div class="result-value" id="resultCost">0 сом</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Маржа:</div>
+                    <div class="result-value" id="resultMargin">0 сом</div>
+                </div>
+            </div>
+            <div class="final-price">
+                <div class="label">💵 ИТОГОВАЯ ЦЕНА:</div>
+                <div class="value" id="finalPrice">0 сом</div>
+            </div>
+            <button class="save-btn" onclick="saveData()">💾 Сохранить расчёт в файл</button>
+        </div>
+    </div>
+
+    <script>
+        // Автоматический расчёт при загрузке
+        window.onload = function() {
+            calculate();
+        };
+
+        function calculate() {
+            const usdRate = parseFloat(document.getElementById('usdRate').value) || 0;
+            const monthlyQuantity = parseFloat(document.getElementById('monthlyQuantity').value) || 1;
+            const marginPercent = parseFloat(document.getElementById('marginPercent').value) || 0;
+
+            // Расчёт материалов
+            let totalMaterials = 0;
+            const materialRows = document.querySelectorAll('#materialsTable tr');
+            materialRows.forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                const quantity = parseFloat(inputs[1].value) || 0;
+                const price = parseFloat(inputs[3].value) || 0;
+                const isUSD = inputs[4].checked;
+                
+                let sum = quantity * price;
+                if (isUSD) {
+                    sum *= usdRate;
+                }
+                
+                totalMaterials += sum;
+                row.querySelector('.material-sum').textContent = sum.toFixed(2);
+            });
+
+            // Расчёт сдельных работ
+            let totalOperations = 0;
+            const operationRows = document.querySelectorAll('#operationsTable tr');
+            operationRows.forEach(row => {
+                const priceInput = row.querySelectorAll('input')[1];
+                const price = parseFloat(priceInput.value) || 0;
+                totalOperations += price;
+            });
+
+            // Расчёт административных расходов
+            let totalAdmin = 0;
+            const adminRows = document.querySelectorAll('#adminTable tr');
+            adminRows.forEach(row => {
+                const priceInput = row.querySelectorAll('input')[1];
+                const price = parseFloat(priceInput.value) || 0;
+                totalAdmin += price;
+            });
+
+            const adminPerUnit = totalAdmin / monthlyQuantity;
+
+            // Итоговый расчёт
+            const totalCost = totalMaterials + totalOperations + adminPerUnit;
+            const margin = totalCost * (marginPercent / 100);
+            const finalPrice = totalCost + margin;
+
+            // Обновление результатов
+            document.getElementById('resultMaterials').textContent = totalMaterials.toFixed(2) + ' сом';
+            document.getElementById('resultOperations').textContent = totalOperations.toFixed(2) + ' сом';
+            document.getElementById('resultAdmin').textContent = adminPerUnit.toFixed(2) + ' сом';
+            document.getElementById('resultCost').textContent = totalCost.toFixed(2) + ' сом';
+            document.getElementById('resultMargin').textContent = margin.toFixed(2) + ' сом';
+            document.getElementById('finalPrice').textContent = finalPrice.toFixed(2) + ' сом';
+        }
+
+        function addMaterialRow() {
+            const table = document.getElementById('materialsTable');
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td><input type="text" value="Новый материал" oninput="calculate()"></td>
+                <td><input type="number" value="1" step="0.1" oninput="calculate()"></td>
+                <td><input type="text" value="шт"></td>
+                <td><input type="number" value="0" step="0.1" oninput="calculate()"></td>
+                <td><input type="checkbox" onchange="calculate()"></td>
+                <td><span class="material-sum">0.00</span></td>
+                <td><button class="btn-remove" onclick="removeRow(this, 'materialsTable')">✕</button></td>
+            `;
+            calculate();
+        }
+
+        function addOperationRow() {
+            const table = document.getElementById('operationsTable');
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td><input type="text" value="Новая операция" oninput="calculate()"></td>
+                <td><input type="number" value="0" step="0.1" oninput="calculate()"></td>
+                <td><button class="btn-remove" onclick="removeRow(this, 'operationsTable')">✕</button></td>
+            `;
+            calculate();
+        }
+
+        function addAdminRow() {
+            const table = document.getElementById('adminTable');
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td><input type="text" value="Новая статья" oninput="calculate()"></td>
+                <td><input type="number" value="0" step="100" oninput="calculate()"></td>
+                <td><button class="btn-remove" onclick="removeRow(this, 'adminTable')">✕</button></td>
+            `;
+            calculate();
+        }
+
+        function removeRow(button, tableId) {
+            const row = button.closest('tr');
+            row.remove();
+            calculate();
+        }
+
+        function saveData() {
+            const productName = document.getElementById('productName').value;
+            const finalPrice = document.getElementById('finalPrice').textContent;
+            
+            let data = `КАЛЬКУЛЯТОР СЕБЕСТОИМОСТИ\n`;
+            data += `Дата: ${new Date().toLocaleDateString('ru-RU')}\n\n`;
+            data += `Изделие: ${productName}\n`;
+            data += `Количество в месяц: ${document.getElementById('monthlyQuantity').value}\n`;
+            data += `Маржа: ${document.getElementById('marginPercent').value}%\n`;
+            data += `Курс USD: ${document.getElementById('usdRate').value} сом\n\n`;
+            
+            data += `МАТЕРИАЛЫ:\n`;
+            document.querySelectorAll('#materialsTable tr').forEach((row, i) => {
+                const inputs = row.querySelectorAll('input');
+                data += `${i+1}. ${inputs[0].value} - ${inputs[1].value} ${inputs[2].value} × ${inputs[3].value} ${inputs[4].checked ? 'USD' : 'сом'} = ${row.querySelector('.material-sum').textContent} сом\n`;
+            });
+            
+            data += `\nСДЕЛЬНЫЕ РАБОТЫ:\n`;
+            document.querySelectorAll('#operationsTable tr').forEach((row, i) => {
+                const inputs = row.querySelectorAll('input');
+                data += `${i+1}. ${inputs[0].value} - ${inputs[1].value} сом\n`;
+            });
+            
+            data += `\nАДМИНИСТРАТИВНЫЕ РАСХОДЫ:\n`;
+            document.querySelectorAll('#adminTable tr').forEach((row, i) => {
+                const inputs = row.querySelectorAll('input');
+                data += `${i+1}. ${inputs[0].value} - ${inputs[1].value} сом/мес\n`;
+            });
+            
+            data += `\n${'='.repeat(50)}\n`;
+            data += `РЕЗУЛЬТАТЫ:\n`;
+            data += `Материалы на 1 шт: ${document.getElementById('resultMaterials').textContent}\n`;
+            data += `Сдельные работы: ${document.getElementById('resultOperations').textContent}\n`;
+            data += `Админ расходы на 1 шт: ${document.getElementById('resultAdmin').textContent}\n`;
+            data += `Себестоимость: ${document.getElementById('resultCost').textContent}\n`;
+            data += `Маржа: ${document.getElementById('resultMargin').textContent}\n`;
+            data += `\nИТОГОВАЯ ЦЕНА: ${finalPrice}\n`;
+            
+            const blob = new Blob([data], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Себестоимость_${productName}_${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('✅ Расчёт сохранён в файл!');
+        }
+    </script>
+</body>
+</html>
