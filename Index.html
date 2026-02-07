@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="description" content="PRO-калькулятор себестоимости для швейного производства">
+    <title>Калькулятор Себестоимости PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --card-hover: #334155;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --primary: #3b82f6;
+            --primary-light: #60a5fa;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --accent: #8b5cf6;
+            --border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+            --gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --gradient-success: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.5;
+            padding-bottom: 90px;
+        }
+
+        .header {
+            background: var(--gradient);
+            padding: 20px 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-size: clamp(1.3rem, 5vw, 1.8rem);
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.15);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .header-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.65rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 12px;
+        }
+
+        .nav-item.active {
+            color: var(--primary-light);
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .main-content {
+            padding: 12px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .icon-blue { background: rgba(59, 130, 246, 0.2); }
+        .icon-green { background: rgba(34, 197, 94, 0.2); }
+        .icon-orange { background: rgba(245, 158, 11, 0.2); }
+        .icon-purple { background: rgba(139, 92, 246, 0.2); }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .input-field.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .input-field label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .input-field input {
+            padding: 12px 14px;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 16px;
+            font-family: inherit;
+            width: 100%;
+        }
+
+        .input-field input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .item-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+
+        .item-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .item-card-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .item-card-delete {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .item-card-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .item-card-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-card-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .item-card-field label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .item-card-field input {
+            padding: 10px 12px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 15px;
+            width: 100%;
+        }
+
+        .item-card-field input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .item-card-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+        }
+
+        .item-card-checkbox input {
+            width: 22px;
+            height: 22px;
+            accent-color: var(--primary);
+        }
+
+        .item-card-checkbox label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .item-card-sum {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--primary-light);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .desktop-table {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .desktop-table {
+                display: block;
+            }
+            .mobile-cards {
+                display: none;
+            }
+            .input-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td input {
+            padding: 10px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+            width: 100%;
+        }
+
+        td input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        .sum-cell {
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            width: auto;
+        }
+
+        .btn-add {
+            margin-top: 12px;
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+            border: 2px dashed rgba(34, 197, 94, 0.3);
+        }
+
+        .results-card {
+            background: var(--gradient);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 12px;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .results-header h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .results-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        .result-item {
+            background: rgba(255,255,255,0.1);
+            padding: 12px 8px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 0.6rem;
+            opacity: 0.8;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .result-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .final-price-box {
+            background: rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .final-price-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .final-price-value {
+            font-size: clamp(1.8rem, 7vw, 2.5rem);
+            font-weight: 800;
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .results-actions .btn {
+            flex: 1;
+        }
+
+        .analytics-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .analytics-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .progress-item {
+            margin-bottom: 10px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-bottom: 4px;
+            color: var(--text-muted);
+        }
+
+        .progress-bar {
+            height: 24px;
+            background: var(--bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            transition: width 0.5s ease;
+        }
+
+        .progress-blue { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .progress-green { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .progress-orange { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+        .tip-box {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid var(--warning);
+            padding: 12px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 12px;
+            font-size: 0.85rem;
+        }
+
+        .tip-box strong {
+            color: var(--warning);
+        }
+
+        .quick-card {
+            background: var(--gradient-success);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .quick-header h2 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .quick-header p {
+            opacity: 0.9;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+
+        .quick-inputs .input-field label {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .quick-inputs .input-field input {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .quick-result {
+            background: rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 16px;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: none;
+        }
+
+        .quick-result-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+
+        .history-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .history-info h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .history-info p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .history-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 3.5rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .template-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .template-card {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 14px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .template-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 10px;
+            background: var(--gradient);
+        }
+
+        .template-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--card);
+            color: var(--text);
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="toast" id="toast"></div>
+
+    <div class="header">
+        <h1>💰 Калькулятор Себестоимости</h1>
+        <span class="header-badge">PRO версия</span>
+    </div>
+
+    <div class="main-content">
+        <div id="tab-calculator" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon icon-blue">⚙️</span>
+                        Основные параметры
+                    </div>
+                </div>
+                <div class="input-grid">
+                    <div class="input-field full-width">
+                        <label>Название изделия</label>
+                        <input type="text" id="productName" placeholder="Например: Песочник" value="Песочник детский" oninput="calculate(); autoSave()">
+                    </div>
+                    <div class="input-field">
+                        <label>Кол-во/мес</label>
+                        <input type="number" id="monthlyQuantity" value="4500" min="1" oninput="calculate(); autoSave()">
+                    </div>
+                    <div class="input-field">
+                        <label>Маржа %</label>
+                        <input type="number" id="marginPercent" value="20" min="0" step="0.1" oninput="calculate(); autoSave()">
+                    </div>
+                    <div class="input-field">
+                        <label>Курс USD</label>
+                        <input type="number" id="usdRate" value="87.8" step="0.1" oninput="renderAll(); calculate(); autoSave()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon icon-green">🧵</span>
+                        Материалы
+                    </div>
+                </div>
+                <div class="mobile-cards" id="materialsMobile"></div>
+                <div class="desktop-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>Расход</th>
+                                <th>Ед.</th>
+                                <th>Цена</th>
+                                <th>USD</th>
+                                <th>Сумма</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="materialsTable"></tbody>
+                    </table>
+                </div>
+                <button class="btn btn-add" onclick="addMaterial()">+ Добавить материал</button>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon icon-orange">✂️</span>
+                        Сдельные работы
+                    </div>
+                </div>
+                <div class="mobile-cards" id="operationsMobile"></div>
+                <div class="desktop-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Операция</th>
+                                <th>Стоимость</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="operationsTable"></tbody>
+                    </table>
+                </div>
+                <button class="btn btn-add" onclick="addOperation()">+ Добавить операцию</button>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon icon-purple">🏢</span>
+                        Админ. расходы
+                    </div>
+                </div>
+                <div class="mobile-cards" id="adminMobile"></div>
+                <div class="desktop-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Статья</th>
+                                <th>Сумма/мес</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTable"></tbody>
+                    </table>
+                </div>
+                <button class="btn btn-add" onclick="addAdmin()">+ Добавить статью</button>
+            </div>
+
+            <div class="results-card">
+                <div class="results-header">
+                    <h2>📊 Результаты</h2>
+                </div>
+                <div class="results-grid">
+                    <div class="result-item">
+                        <div class="result-label">Материалы</div>
+                        <div class="result-value" id="resMaterials">0</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Работы</div>
+                        <div class="result-value" id="resOperations">0</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Админ</div>
+                        <div class="result-value" id="resAdmin">0</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Себест.</div>
+                        <div class="result-value" id="resCost">0</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Маржа</div>
+                        <div class="result-value" id="resMargin">0</div>
+                    </div>
+                </div>
+                <div class="final-price-box">
+                    <div class="final-price-label">💵 ИТОГОВАЯ ЦЕНА</div>
+                    <div class="final-price-value" id="finalPrice">0 сом</div>
+                </div>
+                <div class="results-actions">
+                    <button class="btn btn-primary" onclick="saveToHistory()">💾 Сохранить</button>
+                    <button class="btn" style="background: rgba(255,255,255,0.2); color: white;" onclick="exportData()">📥 Экспорт</button>
+                </div>
+            </div>
+
+            <div class="analytics-card">
+                <div class="analytics-title">📈 Аналитика затрат</div>
+                <div id="analytics"></div>
+            </div>
+        </div>
+
+        <div id="tab-quick" class="tab-content">
+            <div class="quick-card">
+                <div class="quick-header">
+                    <h2>⚡ Быстрый расчёт</h2>
+                    <p>5 полей — 30 секунд — готово!</p>
+                </div>
+                <div class="quick-inputs">
+                    <div class="input-grid">
+                        <div class="input-field full-width">
+                            <label>Название</label>
+                            <input type="text" id="qName" value="Новое изделие">
+                        </div>
+                        <div class="input-field">
+                            <label>Ткань (м)</label>
+                            <input type="number" id="qFabric" value="2" step="0.1">
+                        </div>
+                        <div class="input-field">
+                            <label>Цена ткани (USD)</label>
+                            <input type="number" id="qPrice" value="2" step="0.1">
+                        </div>
+                        <div class="input-field">
+                            <label>Пошив (сом)</label>
+                            <input type="number" id="qWork" value="80">
+                        </div>
+                        <div class="input-field">
+                            <label>Маржа %</label>
+                            <input type="number" id="qMargin" value="20">
+                        </div>
+                    </div>
+                </div>
+                <button class="btn" style="background: white; color: #22c55e; margin-top: 16px;" onclick="quickCalc()">🚀 Рассчитать</button>
+                <div class="quick-result" id="quickResult">
+                    <div style="font-size: 0.85rem; opacity: 0.9;">Итоговая цена</div>
+                    <div class="quick-result-value" id="quickPrice">0 сом</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-history" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon icon-blue">📁</span>
+                        История
+                    </div>
+                </div>
+                <div id="historyList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📂</div>
+                        <p>История пуста</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-templates" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon icon-purple">📋</span>
+                        Шаблоны
+                    </div>
+                </div>
+                <p style="color: var(--text-muted); margin-bottom: 14px; font-size: 0.85rem;">Выберите для автозаполнения</p>
+                <div class="template-grid">
+                    <div class="template-card" onclick="loadTemplate('песочник')">
+                        <div class="template-icon">👶</div>
+                        <div class="template-name">Песочник</div>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('боди')">
+                        <div class="template-icon">👕</div>
+                        <div class="template-name">Боди</div>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('комбинезон')">
+                        <div class="template-icon">🧥</div>
+                        <div class="template-name">Комбинезон</div>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('футболка')">
+                        <div class="template-icon">👚</div>
+                        <div class="template-name">Футболка</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('calculator', this)">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            <span>Калькулятор</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('quick', this)">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span>Быстро</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('history', this)">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>История</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('templates', this)">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+            <span>Шаблоны</span>
+        </button>
+    </nav>
+
+    <script>
+        let materials = [], operations = [], adminCosts = [];
+        let historyData = [];
+
+        const templates = {
+            'песочник': {
+                name: 'Песочник детский',
+                materials: [
+                    { name: 'Ткань основная', quantity: 2.3, unit: 'м', price: 2.0, isUSD: true },
+                    { name: 'Упаковочный пакет', quantity: 1, unit: 'шт', price: 5, isUSD: false },
+                    { name: 'Нитки', quantity: 1, unit: 'шт', price: 1, isUSD: false },
+                    { name: 'Резинка', quantity: 1, unit: 'м', price: 3, isUSD: false },
+                    { name: 'Бирка', quantity: 1, unit: 'шт', price: 2, isUSD: false }
+                ],
+                operations: [
+                    { name: 'Прямострочка', price: 65 },
+                    { name: 'Крой', price: 10 },
+                    { name: 'Чистка', price: 2 },
+                    { name: 'Упаковка', price: 4 },
+                    { name: 'ОТК', price: 3 }
+                ],
+                admin: [
+                    { name: 'Оклады', amount: 245000 },
+                    { name: 'Аренда', amount: 50000 },
+                    { name: 'Коммуналка', amount: 10000 },
+                    { name: 'Бензин', amount: 15000 },
+                    { name: 'Доставка', amount: 2000 },
+                    { name: 'Маркетинг', amount: 90000 }
+                ]
+            },
+            'боди': {
+                name: 'Боди детское',
+                materials: [
+                    { name: 'Трикотаж', quantity: 1.5, unit: 'м', price: 3.0, isUSD: true },
+                    { name: 'Кнопки', quantity: 3, unit: 'шт', price: 2, isUSD: false }
+                ],
+                operations: [
+                    { name: 'Оверлок', price: 40 },
+                    { name: 'Крой', price: 8 },
+                    { name: 'Упаковка', price: 3 }
+                ],
+                admin: [
+                    { name: 'Оклады', amount: 200000 },
+                    { name: 'Аренда', amount: 50000 },
+                    { name: 'Коммуналка', amount: 10000 }
+                ]
+            },
+            'комбинезон': {
+                name: 'Комбинезон',
+                materials: [
+                    { name: 'Ткань', quantity: 3.5, unit: 'м', price: 4.0, isUSD: true },
+                    { name: 'Молния', quantity: 1, unit: 'шт', price: 15, isUSD: false }
+                ],
+                operations: [
+                    { name: 'Прямострочка', price: 90 },
+                    { name: 'Крой', price: 15 },
+                    { name: 'Упаковка', price: 5 }
+                ],
+                admin: [
+                    { name: 'Оклады', amount: 250000 },
+                    { name: 'Аренда', amount: 50000 },
+                    { name: 'Коммуналка', amount: 10000 }
+                ]
+            },
+            'футболка': {
+                name: 'Футболка',
+                materials: [
+                    { name: 'Трикотаж', quantity: 1.2, unit: 'м', price: 2.5, isUSD: true }
+                ],
+                operations: [
+                    { name: 'Оверлок', price: 35 },
+                    { name: 'Крой', price: 5 },
+                    { name: 'Упаковка', price: 2 }
+                ],
+                admin: [
+                    { name: 'Оклады', amount: 180000 },
+                    { name: 'Аренда', amount: 40000 },
+                    { name: 'Коммуналка', amount: 8000 }
+                ]
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromStorage();
+            renderAll();
+            calculate();
+            loadHistory();
+        });
+
+        function switchTab(tabName, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            if (btnElement) btnElement.classList.add('active');
+            if (tabName === 'history') loadHistory();
+        }
+
+        function loadTemplate(type) {
+            const t = templates[type];
+            document.getElementById('productName').value = t.name;
+            materials = JSON.parse(JSON.stringify(t.materials));
+            operations = JSON.parse(JSON.stringify(t.operations));
+            adminCosts = JSON.parse(JSON.stringify(t.admin));
+            renderAll();
+            calculate();
+            autoSave();
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-calculator').classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.nav-item')[0].classList.add('active');
+            showToast('Шаблон: ' + t.name);
+        }
+
+        function renderAll() {
+            renderMaterialsMobile();
+            renderMaterialsDesktop();
+            renderOperationsMobile();
+            renderOperationsDesktop();
+            renderAdminMobile();
+            renderAdminDesktop();
+        }
+
+        function renderMaterialsMobile() {
+            const container = document.getElementById('materialsMobile');
+            const usdRate = parseFloat(document.getElementById('usdRate').value) || 0;
+            container.innerHTML = materials.map((m, i) => {
+                const sum = m.quantity * m.price * (m.isUSD ? usdRate : 1);
+                return `
+                    <div class="item-card">
+                        <div class="item-card-header">
+                            <span class="item-card-title">Материал #${i+1}</span>
+                            <button class="item-card-delete" onclick="materials.splice(${i},1); renderAll(); calculate(); autoSave()">×</button>
+                        </div>
+                        <div class="item-card-row">
+                            <div class="item-card-field" style="grid-column: 1 / -1;">
+                                <label>Название</label>
+                                <input type="text" value="${escapeHtml(m.name)}" oninput="materials[${i}].name=this.value; autoSave()">
+                            </div>
+                        </div>
+                        <div class="item-card-row">
+                            <div class="item-card-field">
+                                <label>Расход</label>
+                                <input type="number" value="${m.quantity}" step="0.01" oninput="materials[${i}].quantity=parseFloat(this.value)||0; renderAll(); calculate(); autoSave()">
+                            </div>
+                            <div class="item-card-field">
+                                <label>Ед. изм.</label>
+                                <input type="text" value="${escapeHtml(m.unit)}" oninput="materials[${i}].unit=this.value; autoSave()">
+                            </div>
+                        </div>
+                        <div class="item-card-row">
+                            <div class="item-card-field">
+                                <label>Цена</label>
+                                <input type="number" value="${m.price}" step="0.01" oninput="materials[${i}].price=parseFloat(this.value)||0; renderAll(); calculate(); autoSave()">
+                            </div>
+                            <div class="item-card-field" style="display: flex; align-items: flex-end; padding-bottom: 8px;">
+                                <div class="item-card-checkbox">
+                                    <input type="checkbox" id="usd${i}" ${m.isUSD?'checked':''} onchange="materials[${i}].isUSD=this.checked; renderAll(); calculate(); autoSave()">
+                                    <label for="usd${i}">В USD</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item-card-sum">Сумма: ${sum.toFixed(2)} сом</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderOperationsMobile() {
+            const container = document.getElementById('operationsMobile');
+            container.innerHTML = operations.map((op, i) => `
+                <div class="item-card">
+                    <div class="item-card-header">
+                        <span class="item-card-title">Операция #${i+1}</span>
+                        <button class="item-card-delete" onclick="operations.splice(${i},1); renderAll(); calculate(); autoSave()">×</button>
+                    </div>
+                    <div class="item-card-row">
+                        <div class="item-card-field" style="grid-column: 1 / -1;">
+                            <label>Название операции</label>
+                            <input type="text" value="${escapeHtml(op.name)}" oninput="operations[${i}].name=this.value; autoSave()">
+                        </div>
+                    </div>
+                    <div class="item-card-row">
+                        <div class="item-card-field">
+                            <label>Стоимость (сом)</label>
+                            <input type="number" value="${op.price}" step="0.01" oninput="operations[${i}].price=parseFloat(this.value)||0; calculate(); autoSave()">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderAdminMobile() {
+            const container = document.getElementById('adminMobile');
+            container.innerHTML = adminCosts.map((ac, i) => `
+                <div class="item-card">
+                    <div class="item-card-header">
+                        <span class="item-card-title">Статья #${i+1}</span>
+                        <button class="item-card-delete" onclick="adminCosts.splice(${i},1); renderAll(); calculate(); autoSave()">×</button>
+                    </div>
+                    <div class="item-card-row">
+                        <div class="item-card-field" style="grid-column: 1 / -1;">
+                            <label>Название статьи</label>
+                            <input type="text" value="${escapeHtml(ac.name)}" oninput="adminCosts[${i}].name=this.value; autoSave()">
+                        </div>
+                    </div>
+                    <div class="item-card-row">
+                        <div class="item-card-field">
+                            <label>Сумма в месяц (сом)</label>
+                            <input type="number" value="${ac.amount}" step="100" oninput="adminCosts[${i}].amount=parseFloat(this.value)||0; calculate(); autoSave()">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderMaterialsDesktop() {
+            const tbody = document.getElementById('materialsTable');
+            const usdRate = parseFloat(document.getElementById('usdRate').value) || 0;
+            tbody.innerHTML = materials.map((m, i) => {
+                const sum = m.quantity * m.price * (m.isUSD ? usdRate : 1);
+                return `
+                    <tr>
+                        <td><input type="text" value="${escapeHtml(m.name)}" oninput="materials[${i}].name=this.value; autoSave()"></td>
+                        <td><input type="number" value="${m.quantity}" step="0.01" oninput="materials[${i}].quantity=parseFloat(this.value)||0; renderAll(); calculate(); autoSave()"></td>
+                        <td><input type="text" value="${escapeHtml(m.unit)}" oninput="materials[${i}].unit=this.value; autoSave()"></td>
+                        <td><input type="number" value="${m.price}" step="0.01" oninput="materials[${i}].price=parseFloat(this.value)||0; renderAll(); calculate(); autoSave()"></td>
+                        <td style="text-align: center;"><input type="checkbox" ${m.isUSD?'checked':''} onchange="materials[${i}].isUSD=this.checked; renderAll(); calculate(); autoSave()"></td>
+                        <td class="sum-cell">${sum.toFixed(2)}</td>
+                        <td><button class="btn btn-danger" onclick="materials.splice(${i},1); renderAll(); calculate(); autoSave()">×</button></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderOperationsDesktop() {
+            const tbody = document.getElementById('operationsTable');
+            tbody.innerHTML = operations.map((op, i) => `
+                <tr>
+                    <td><input type="text" value="${escapeHtml(op.name)}" oninput="operations[${i}].name=this.value; autoSave()"></td>
+                    <td><input type="number" value="${op.price}" step="0.01" oninput="operations[${i}].price=parseFloat(this.value)||0; calculate(); autoSave()"></td>
+                    <td><button class="btn btn-danger" onclick="operations.splice(${i},1); renderAll(); calculate(); autoSave()">×</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderAdminDesktop() {
+            const tbody = document.getElementById('adminTable');
+            tbody.innerHTML = adminCosts.map((ac, i) => `
+                <tr>
+                    <td><input type="text" value="${escapeHtml(ac.name)}" oninput="adminCosts[${i}].name=this.value; autoSave()"></td>
+                    <td><input type="number" value="${ac.amount}" step="100" oninput="adminCosts[${i}].amount=parseFloat(this.value)||0; calculate(); autoSave()"></td>
+                    <td><button class="btn btn-danger" onclick="adminCosts.splice(${i},1); renderAll(); calculate(); autoSave()">×</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function addMaterial() {
+            materials.push({ name: 'Новый материал', quantity: 1, unit: 'шт', price: 0, isUSD: false });
+            renderAll();
+            calculate();
+            autoSave();
+        }
+
+        function addOperation() {
+            operations.push({ name: 'Новая операция', price: 0 });
+            renderAll();
+            calculate();
+            autoSave();
+        }
+
+        function addAdmin() {
+            adminCosts.push({ name: 'Новая статья', amount: 0 });
+            renderAll();
+            calculate();
+            autoSave();
+        }
+
+        function calculate() {
+            const usdRate = parseFloat(document.getElementById('usdRate').value) || 0;
+            const monthlyQty = parseFloat(document.getElementById('monthlyQuantity').value) || 1;
+            const marginPct = parseFloat(document.getElementById('marginPercent').value) || 0;
+
+            const totalMat = materials.reduce((sum, m) => sum + (m.quantity * m.price * (m.isUSD ? usdRate : 1)), 0);
+            const totalOps = operations.reduce((sum, op) => sum + op.price, 0);
+            const totalAdm = adminCosts.reduce((sum, ac) => sum + ac.amount, 0);
+            const adminPerUnit = totalAdm / monthlyQty;
+
+            const cost = totalMat + totalOps + adminPerUnit;
+            const margin = cost * (marginPct / 100);
+            const final = cost + margin;
+
+            document.getElementById('resMaterials').textContent = totalMat.toFixed(2);
+            document.getElementById('resOperations').textContent = totalOps.toFixed(2);
+            document.getElementById('resAdmin').textContent = adminPerUnit.toFixed(2);
+            document.getElementById('resCost').textContent = cost.toFixed(2);
+            document.getElementById('resMargin').textContent = margin.toFixed(2);
+            document.getElementById('finalPrice').textContent = final.toFixed(2) + ' сом';
+
+            renderAnalytics(totalMat, totalOps, adminPerUnit, cost);
+        }
+
+        function renderAnalytics(mat, ops, adm, total) {
+            const matPct = total > 0 ? (mat / total * 100).toFixed(1) : 0;
+            const opsPct = total > 0 ? (ops / total * 100).toFixed(1) : 0;
+            const admPct = total > 0 ? (adm / total * 100).toFixed(1) : 0;
+
+            let tip = '';
+            if (matPct > 60) tip = `<div class="tip-box"><strong>💡 Совет:</strong> Материалы ${matPct}% — ищите выгодных поставщиков</div>`;
+            else if (opsPct > 40) tip = `<div class="tip-box"><strong>💡 Совет:</strong> Работы ${opsPct}% — оптимизируйте процесс</div>`;
+            else if (admPct > 30) tip = `<div class="tip-box"><strong>💡 Совет:</strong> Админ ${admPct}% — увеличьте объём</div>`;
+
+            document.getElementById('analytics').innerHTML = `
+                <div class="progress-item">
+                    <div class="progress-label"><span>Материалы</span><span>${matPct}%</span></div>
+                    <div class="progress-bar"><div class="progress-fill progress-blue" style="width: ${matPct}%"></div></div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-label"><span>Работы</span><span>${opsPct}%</span></div>
+                    <div class="progress-bar"><div class="progress-fill progress-green" style="width: ${opsPct}%"></div></div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-label"><span>Админ</span><span>${admPct}%</span></div>
+                    <div class="progress-bar"><div class="progress-fill progress-orange" style="width: ${admPct}%"></div></div>
+                </div>
+                ${tip}
+            `;
+        }
+
+        function quickCalc() {
+            const fabric = parseFloat(document.getElementById('qFabric').value) || 0;
+            const price = parseFloat(document.getElementById('qPrice').value) || 0;
+            const work = parseFloat(document.getElementById('qWork').value) || 0;
+            const margin = parseFloat(document.getElementById('qMargin').value) || 0;
+            const usd = parseFloat(document.getElementById('usdRate').value) || 87.8;
+
+            const matCost = fabric * price * usd;
+            const adminPer = adminCosts.length > 0 
+                ? adminCosts.reduce((s, a) => s + a.amount, 0) / (parseFloat(document.getElementById('monthlyQuantity').value) || 4500)
+                : 90;
+            const cost = matCost + work + adminPer;
+            const final = cost * (1 + margin / 100);
+
+            document.getElementById('quickResult').style.display = 'block';
+            document.getElementById('quickPrice').textContent = final.toFixed(2) + ' сом';
+        }
+
+        function autoSave() {
+            const data = {
+                productName: document.getElementById('productName').value,
+                monthlyQuantity: document.getElementById('monthlyQuantity').value,
+                marginPercent: document.getElementById('marginPercent').value,
+                usdRate: document.getElementById('usdRate').value,
+                materials, operations, adminCosts
+            };
+            localStorage.setItem('currentCalc', JSON.stringify(data));
+        }
+
+        function loadFromStorage() {
+            const saved = localStorage.getItem('currentCalc');
+            if (saved) {
+                const data = JSON.parse(saved);
+                document.getElementById('productName').value = data.productName || '';
+                document.getElementById('monthlyQuantity').value = data.monthlyQuantity || 4500;
+                document.getElementById('marginPercent').value = data.marginPercent || 20;
+                document.getElementById('usdRate').value = data.usdRate || 87.8;
+                materials = data.materials || [];
+                operations = data.operations || [];
+                adminCosts = data.adminCosts || [];
+            } else {
+                loadTemplate('песочник');
+            }
+        }
+
+        function saveToHistory() {
+            const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+            const item = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString('ru-RU'),
+                time: new Date().toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'}),
+                name: document.getElementById('productName').value || 'Без названия',
+                price: document.getElementById('finalPrice').textContent,
+                data: {
+                    productName: document.getElementById('productName').value,
+                    monthlyQuantity: document.getElementById('monthlyQuantity').value,
+                    marginPercent: document.getElementById('marginPercent').value,
+                    usdRate: document.getElementById('usdRate').value,
+                    materials: JSON.parse(JSON.stringify(materials)),
+                    operations: JSON.parse(JSON.stringify(operations)),
+                    adminCosts: JSON.parse(JSON.stringify(adminCosts))
+                }
+            };
+            history.unshift(item);
+            localStorage.setItem('calcHistory', JSON.stringify(history.slice(0, 20)));
+            showToast('Сохранено в историю');
+        }
+
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+            historyData = history;
+            const container = document.getElementById('historyList');
+            if (history.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📂</div><p>История пуста</p></div>';
+                return;
+            }
+            container.innerHTML = history.map((item, index) => `
+                <div class="history-item" onclick="loadFromHistoryByIndex(${index})">
+                    <div class="history-info">
+                        <h3>${escapeHtml(item.name)}</h3>
+                        <p>${item.date} ${item.time}</p>
+                    </div>
+                    <div class="history-price">${item.price}</div>
+                </div>
+            `).join('');
+        }
+
+        function loadFromHistoryByIndex(index) {
+            const item = historyData[index];
+            if (!item || !item.data) return;
+            
+            document.getElementById('productName').value = item.data.productName;
+            document.getElementById('monthlyQuantity').value = item.data.monthlyQuantity;
+            document.getElementById('marginPercent').value = item.data.marginPercent;
+            document.getElementById('usdRate').value = item.data.usdRate;
+            materials = JSON.parse(JSON.stringify(item.data.materials));
+            operations = JSON.parse(JSON.stringify(item.data.operations));
+            adminCosts = JSON.parse(JSON.stringify(item.data.adminCosts));
+            renderAll();
+            calculate();
+            autoSave();
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-calculator').classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.nav-item')[0].classList.add('active');
+            showToast('Расчёт загружен');
+        }
+
+        function exportData() {
+            const data = {
+                изделие: document.getElementById('productName').value,
+                дата: new Date().toLocaleString('ru-RU'),
+                параметры: {
+                    количествоВМесяц: document.getElementById('monthlyQuantity').value,
+                    маржаПроцент: document.getElementById('marginPercent').value,
+                    курсUSD: document.getElementById('usdRate').value
+                },
+                материалы: materials,
+                сдельныеРаботы: operations,
+                админРасходы: adminCosts,
+                результаты: {
+                    материалы: document.getElementById('resMaterials').textContent + ' сом',
+                    работы: document.getElementById('resOperations').textContent + ' сом',
+                    админНа1шт: document.getElementById('resAdmin').textContent + ' сом',
+                    себестоимость: document.getElementById('resCost').textContent + ' сом',
+                    маржа: document.getElementById('resMargin').textContent + ' сом',
+                    итоговаяЦена: document.getElementById('finalPrice').textContent
+                }
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const safeName = (data.изделие || 'расчет').replace(/[^a-zA-Z0-9а-яА-Я]/g, '_');
+            a.download = `Себестоимость_${safeName}_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Файл скачан');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
