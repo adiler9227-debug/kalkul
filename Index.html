@@ -2,274 +2,328 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0a0a0f">
-    <title>Калькулятор Себестоимости PRO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CostCraft Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-:root{--bg:#0a0a0f;--surface:rgba(255,255,255,0.03);--glass:rgba(255,255,255,0.08);--glass-border:rgba(255,255,255,0.1);--text:#fff;--text-secondary:rgba(255,255,255,0.6);--text-muted:rgba(255,255,255,0.4);--neon-blue:#00d4ff;--neon-purple:#b829dd;--neon-pink:#ff006e;--neon-green:#00f5d4;--neon-orange:#ff9f1c;--gradient-primary:linear-gradient(135deg,#00d4ff 0%,#b829dd 50%,#ff006e 100%);--gradient-success:linear-gradient(135deg,#00f5d4 0%,#00d4ff 100%);--shadow-glow:0 0 40px rgba(0,212,255,0.15)}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{font-size:16px}
-body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);padding-bottom:100px;position:relative}
-body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 20% 80%,rgba(0,212,255,0.15) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(184,41,221,0.15) 0%,transparent 50%);animation:bgMove 20s ease infinite;z-index:-1}
-@keyframes bgMove{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-30px)}}
-.header{background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);padding:24px 16px;text-align:center;position:sticky;top:0;z-index:50}
-.header h1{font-size:clamp(1.5rem,5vw,2rem);font-weight:800;background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
-.header-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);padding:6px 16px;border-radius:50px;font-size:.75rem;font-weight:600;color:var(--neon-blue);text-transform:uppercase}
-.header-badge::before{content:'';width:8px;height:8px;background:var(--neon-green);border-radius:50%;box-shadow:0 0 10px var(--neon-green);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-.bottom-nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:400px;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:24px;display:flex;justify-content:space-around;padding:12px;z-index:100;box-shadow:var(--shadow-glow)}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 16px;background:none;border:none;color:var(--text-muted);font-size:.65rem;font-weight:600;cursor:pointer;transition:all .3s;border-radius:16px;position:relative}
-.nav-item::before{content:'';position:absolute;inset:0;background:var(--gradient-primary);opacity:0;transition:opacity .3s;border-radius:16px}
-.nav-item.active{color:white;transform:translateY(-2px)}
-.nav-item.active::before{opacity:1}
-.nav-item svg{width:24px;height:24px;position:relative;z-index:1}
-.nav-item span{position:relative;z-index:1}
-.main-content{padding:20px 16px;max-width:800px;margin:0 auto}
-.tab-content{display:none}
-.tab-content.active{display:block;animation:fadeIn .5s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1}}
-.card{background:var(--surface);backdrop-filter:blur(10px);border:1px solid var(--glass-border);border-radius:24px;padding:24px;margin-bottom:20px;position:relative;overflow:hidden;transition:all .3s}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)}
-.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-glow)}
-.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.card-title{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:12px}
-.card-title .icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:var(--glass);border:1px solid var(--glass-border);box-shadow:0 4px 15px rgba(0,0,0,0.2);transition:transform .3s}
-.card:hover .card-title .icon{transform:scale(1.1) rotate(5deg)}
-.icon-blue{background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(0,212,255,0.05));box-shadow:0 0 20px rgba(0,212,255,0.3)}
-.icon-green{background:linear-gradient(135deg,rgba(0,245,212,0.2),rgba(0,245,212,0.05));box-shadow:0 0 20px rgba(0,245,212,0.3)}
-.icon-orange{background:linear-gradient(135deg,rgba(255,159,28,0.2),rgba(255,159,28,0.05));box-shadow:0 0 20px rgba(255,159,28,0.3)}
-.icon-purple{background:linear-gradient(135deg,rgba(184,41,221,0.2),rgba(184,41,221,0.05));box-shadow:0 0 20px rgba(184,41,221,0.3)}
-.input-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-.input-field{display:flex;flex-direction:column;gap:8px}
-.input-field.full-width{grid-column:1/-1}
-.input-field label{font-size:.75rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em}
-.input-field input{padding:16px;background:rgba(0,0,0,0.3);border:1px solid var(--glass-border);border-radius:16px;color:var(--text);font-size:16px;font-weight:500;width:100%;transition:all .3s}
-.input-field input:focus{outline:none;border-color:var(--neon-blue);box-shadow:0 0 0 3px rgba(0,212,255,0.1)}
-.item-card{background:linear-gradient(145deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));border:1px solid var(--glass-border);border-radius:20px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden;transition:all .3s}
-.item-card:hover{transform:translateX(4px);border-color:rgba(0,212,255,0.3);box-shadow:0 10px 30px rgba(0,0,0,0.3)}
-.item-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.item-card-title{font-weight:700;font-size:1rem;color:var(--neon-blue);text-shadow:0 0 10px rgba(0,212,255,0.3)}
-.item-card-delete{width:36px;height:36px;border-radius:10px;background:rgba(255,0,110,0.1);color:var(--neon-pink);border:1px solid rgba(255,0,110,0.3);display:flex;align-items:center;justify-content:center;font-size:1.2rem;cursor:pointer;transition:all .3s}
-.item-card-delete:hover{background:rgba(255,0,110,0.2);transform:scale(1.1);box-shadow:0 0 15px rgba(255,0,110,0.4)}
-.item-card-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.item-card-field{display:flex;flex-direction:column;gap:6px}
-.item-card-field label{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;font-weight:600}
-.item-card-field input{padding:12px;background:rgba(0,0,0,0.3);border:1px solid var(--glass-border);border-radius:12px;color:var(--text);font-size:15px;width:100%;transition:all .3s}
-.item-card-field input:focus{outline:none;border-color:var(--neon-purple);box-shadow:0 0 0 2px rgba(184,41,221,0.1)}
-.item-card-checkbox{display:flex;align-items:center;gap:10px;padding:8px 0}
-.item-card-checkbox input{width:24px;height:24px;accent-color:var(--neon-blue)}
-.item-card-sum{background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(184,41,221,0.15));color:var(--neon-blue);padding:14px;border-radius:14px;font-weight:800;font-size:1.1rem;text-align:center;margin-top:14px;border:1px solid rgba(0,212,255,0.2);text-shadow:0 0 10px rgba(0,212,255,0.3)}
-.desktop-table{display:none}
-@media(min-width:768px){.desktop-table{display:block}.mobile-cards{display:none}.input-grid{grid-template-columns:repeat(4,1fr)}}
-table{width:100%;border-collapse:separate;border-spacing:0 8px}
-th{text-align:left;padding:12px 8px;font-size:.7rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em}
-td{padding:4px 8px}
-tr{background:rgba(0,0,0,0.2);transition:all .3s}
-tr:hover{background:rgba(255,255,255,0.05)}
-td:first-child{border-radius:12px 0 0 12px}
-td:last-child{border-radius:0 12px 12px 0}
-td input{padding:12px;background:transparent;border:1px solid transparent;border-radius:8px;color:var(--text);font-size:.95rem;width:100%;transition:all .3s}
-td input:focus{outline:none;background:rgba(0,0,0,0.3);border-color:var(--neon-blue)}
-.sum-cell{font-weight:800;color:var(--neon-blue);text-shadow:0 0 10px rgba(0,212,255,0.3);font-size:1rem}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:16px 24px;border:none;border-radius:16px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .3s;width:100%;position:relative;overflow:hidden;text-transform:uppercase;letter-spacing:.02em}
-.btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);transition:left .5s}
-.btn:hover::before{left:100%}
-.btn-primary{background:var(--gradient-primary);color:white;box-shadow:0 4px 20px rgba(0,212,255,0.4)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,212,255,0.6)}
-.btn-success{background:var(--gradient-success);color:#000;box-shadow:0 4px 20px rgba(0,245,212,0.4)}
-.btn-danger{background:rgba(255,0,110,0.1);color:var(--neon-pink);border:1px solid rgba(255,0,110,0.3);padding:10px 18px;font-size:.9rem;width:auto}
-.btn-add{margin-top:16px;background:transparent;color:var(--neon-green);border:2px dashed rgba(0,245,212,0.3);font-weight:600}
-.btn-add:hover{background:rgba(0,245,212,0.1);border-style:solid;border-color:var(--neon-green);box-shadow:0 0 20px rgba(0,245,212,0.3)}
-.results-card{background:linear-gradient(145deg,rgba(0,212,255,0.1),rgba(184,41,221,0.1));border:1px solid rgba(0,212,255,0.2);border-radius:28px;padding:28px;margin-bottom:20px;position:relative;overflow:hidden;box-shadow:var(--shadow-glow)}
-.results-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg,transparent,rgba(0,212,255,0.1),transparent 30%);animation:rotate 10s linear infinite}
-@keyframes rotate{100%{transform:rotate(360deg)}}
-.results-header{text-align:center;margin-bottom:24px;position:relative;z-index:1}
-.results-header h2{font-size:1.3rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;background:linear-gradient(to right,#fff,var(--neon-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;position:relative;z-index:1}
-@media(min-width:768px){.results-grid{grid-template-columns:repeat(5,1fr)}}
-.result-item{background:rgba(0,0,0,0.3);padding:16px 8px;border-radius:16px;text-align:center;border:1px solid var(--glass-border);transition:all .3s}
-.result-item:hover{transform:translateY(-4px);border-color:var(--neon-blue);box-shadow:0 10px 20px rgba(0,212,255,0.2)}
-.result-label{font-size:.65rem;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
-.result-value{font-size:1.1rem;font-weight:800;color:var(--text)}
-.final-price-box{background:rgba(0,0,0,0.4);padding:28px;border-radius:24px;text-align:center;margin-bottom:24px;border:1px solid rgba(0,212,255,0.3);position:relative;z-index:1;box-shadow:inset 0 0 30px rgba(0,212,255,0.1)}
-.final-price-label{font-size:.9rem;color:var(--text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.1em;font-weight:600}
-.final-price-value{font-size:clamp(2.5rem,8vw,3.5rem);font-weight:900;background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 30px rgba(0,212,255,0.3)}
-.results-actions{display:flex;gap:12px;position:relative;z-index:1}
-.results-actions .btn{flex:1}
-.analytics-card{background:var(--surface);border:1px solid var(--glass-border);border-radius:24px;padding:24px}
-.analytics-title{font-size:1.1rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
-.progress-item{margin-bottom:16px}
-.progress-label{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:8px;color:var(--text-secondary);font-weight:600}
-.progress-bar{height:32px;background:rgba(0,0,0,0.4);border-radius:12px;overflow:hidden;position:relative;border:1px solid var(--glass-border)}
-.progress-fill{height:100%;border-radius:12px;display:flex;align-items:center;padding:0 14px;font-size:.8rem;font-weight:800;transition:width .8s ease;position:relative;overflow:hidden;text-shadow:0 1px 2px rgba(0,0,0,0.5)}
-.progress-fill::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);animation:shimmer 2s infinite}
-@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-.progress-blue{background:linear-gradient(90deg,#00d4ff,#0099cc);box-shadow:0 0 20px rgba(0,212,255,0.4)}
-.progress-green{background:linear-gradient(90deg,#00f5d4,#00ccaa);box-shadow:0 0 20px rgba(0,245,212,0.4)}
-.progress-orange{background:linear-gradient(90deg,#ff9f1c,#ff7700);box-shadow:0 0 20px rgba(255,159,28,0.4)}
-.tip-box{background:linear-gradient(135deg,rgba(255,159,28,0.1),rgba(255,0,110,0.1));border:1px solid rgba(255,159,28,0.3);padding:16px;border-radius:16px;margin-top:16px;font-size:.9rem}
-.tip-box strong{color:var(--neon-orange);text-shadow:0 0 10px rgba(255,159,28,0.3)}
-.quick-card{background:linear-gradient(145deg,rgba(0,245,212,0.1),rgba(0,212,255,0.1));border:1px solid rgba(0,245,212,0.3);border-radius:28px;padding:28px;position:relative;overflow:hidden;box-shadow:0 0 40px rgba(0,245,212,0.15)}
-.quick-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon-green),transparent)}
-.quick-header h2{font-size:1.5rem;font-weight:800;margin-bottom:6px;color:var(--neon-green);text-shadow:0 0 20px rgba(0,245,212,0.5)}
-.quick-header p{color:var(--text-secondary);font-size:.95rem;margin-bottom:24px}
-.quick-inputs .input-field label{color:rgba(0,245,212,0.8)}
-.quick-inputs .input-field input{background:rgba(0,0,0,0.4);border-color:rgba(0,245,212,0.2);color:var(--neon-green);font-weight:600}
-.quick-result{background:rgba(0,0,0,0.4);border:1px solid rgba(0,245,212,0.3);border-radius:24px;padding:28px;text-align:center;margin-top:24px;display:none;box-shadow:inset 0 0 30px rgba(0,245,212,0.1)}
-.quick-result-value{font-size:2.8rem;font-weight:900;color:var(--neon-green);text-shadow:0 0 30px rgba(0,245,212,0.5)}
-.history-item{background:linear-gradient(145deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));border:1px solid var(--glass-border);border-radius:20px;padding:20px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
-.history-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--gradient-primary);opacity:0;transition:opacity .3s}
-.history-item:hover{transform:translateX(8px);border-color:var(--neon-blue);box-shadow:0 10px 30px rgba(0,212,255,0.2)}
-.history-item:hover::before{opacity:1}
-.history-info h3{font-size:1.05rem;font-weight:700;margin-bottom:4px;color:var(--text)}
-.history-info p{font-size:.8rem;color:var(--text-muted)}
-.history-price{font-size:1.3rem;font-weight:800;color:var(--neon-green);text-shadow:0 0 15px rgba(0,245,212,0.4)}
-.empty-state{text-align:center;padding:60px 20px;color:var(--text-muted)}
-.empty-state-icon{font-size:4rem;margin-bottom:16px;opacity:.5;filter:drop-shadow(0 0 20px rgba(255,255,255,0.2))}
-.template-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-@media(min-width:768px){.template-grid{grid-template-columns:repeat(4,1fr)}}
-.template-card{background:var(--surface);border:1px solid var(--glass-border);border-radius:24px;padding:28px 16px;text-align:center;cursor:pointer;transition:all .4s ease;position:relative;overflow:hidden}
-.template-card::before{content:'';position:absolute;inset:0;background:var(--gradient-primary);opacity:0;transition:opacity .4s}
-.template-card:hover{transform:translateY(-8px) scale(1.02);border-color:transparent;box-shadow:0 20px 40px rgba(0,212,255,0.3)}
-.template-card:hover::before{opacity:.1}
-.template-icon{width:64px;height:64px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 16px;background:var(--glass);border:1px solid var(--glass-border);position:relative;z-index:1;transition:all .4s;box-shadow:0 10px 30px rgba(0,0,0,0.3)}
-.template-card:hover .template-icon{transform:scale(1.1) rotate(5deg);box-shadow:0 0 30px rgba(0,212,255,0.5)}
-.template-name{font-weight:700;font-size:1rem;position:relative;z-index:1;transition:color .4s}
-.template-card:hover .template-name{color:var(--neon-blue)}
-.toast{position:fixed;bottom:120px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--glass);backdrop-filter:blur(20px);color:var(--text);padding:18px 32px;border-radius:16px;font-size:1rem;font-weight:600;box-shadow:var(--shadow-glow);border:1px solid var(--glass-border);opacity:0;transition:all .4s cubic-bezier(0.68,-0.55,0.265,1.55);z-index:1000;text-align:center}
-.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+        :root{--bg:#0f172a;--surface:rgba(30,41,59,.8);--border:rgba(148,163,184,.1);--text:#f8fafc;--text-secondary:#cbd5e1;--primary:#3b82f6;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);padding-bottom:100px}
+        .bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 20% 80%,rgba(59,130,246,.15) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(139,92,246,.15) 0%,transparent 50%);animation:bg 30s linear infinite}
+        @keyframes bg{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+        .header{background:rgba(15,23,42,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:20px;text-align:center;position:sticky;top:0;z-index:50}
+        .header h1{font-size:1.5rem;font-weight:800;background:linear-gradient(to right,var(--text),var(--text-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(16,185,129,.1);color:var(--success);padding:6px 16px;border-radius:50px;font-size:.75rem;font-weight:700;margin-top:8px}
+        .badge::before{content:'';width:8px;height:8px;background:var(--success);border-radius:50%;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+        .nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:calc(100% - 40px);max-width:400px;background:var(--surface);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:20px;display:flex;justify-content:space-around;padding:10px;z-index:100}
+        .nav-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 16px;background:none;border:none;color:#64748b;font-size:.7rem;font-weight:600;cursor:pointer;transition:all .3s;border-radius:12px;position:relative}
+        .nav-btn.active{color:#fff}
+        .nav-btn.active::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--purple));border-radius:12px;z-index:-1}
+        .nav-btn svg{width:22px;height:22px;position:relative;z-index:1}
+        .content{padding:20px;max-width:800px;margin:0 auto}
+        .tab{display:none;animation:fade .4s ease}.tab.active{display:block}
+        @keyframes fade{from{opacity:0;transform:translateY(20px)}to{opacity:1}}
+        .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:20px;backdrop-filter:blur(10px);transition:all .3s}
+        .card:hover{box-shadow:0 20px 40px rgba(0,0,0,.3);transform:translateY(-2px)}
+        .card-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+        .card-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--primary)}
+        .card-icon.green{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.2);color:var(--success)}
+        .card-icon.orange{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.2);color:var(--warning)}
+        .card-icon.purple{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.2);color:var(--purple)}
+        .card-title{font-size:1.1rem;font-weight:700}
+        .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+        .field{display:flex;flex-direction:column;gap:6px}
+        .field.full{grid-column:1/-1}
+        .field label{font-size:.75rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase}
+        .field input{padding:14px 16px;background:rgba(15,23,42,.6);border:2px solid var(--border);border-radius:12px;color:var(--text);font-size:16px;width:100%;transition:all .3s}
+        .field input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(59,130,246,.1)}
+        .item{background:rgba(15,23,42,.6);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px}
+        .item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+        .item-title{font-weight:700;color:var(--primary)}
+        .item-del{width:32px;height:32px;border-radius:8px;background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.2);display:flex;align-items:center;justify-content:center;cursor:pointer}
+        .item-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+        .item-field{display:flex;flex-direction:column;gap:4px}
+        .item-field label{font-size:.7rem;color:#64748b;font-weight:600;text-transform:uppercase}
+        .item-field input{padding:10px 12px;background:rgba(30,41,59,.8);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:15px}
+        .item-field input:focus{outline:none;border-color:var(--primary)}
+        .item-check{display:flex;align-items:center;gap:8px;padding:8px 0}
+        .item-check input{width:20px;height:20px;accent-color:var(--primary)}
+        .item-sum{background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(139,92,246,.2));color:var(--primary);padding:12px;border-radius:12px;font-weight:700;text-align:center;margin-top:12px;border:1px solid rgba(59,130,246,.3)}
+        .desktop{display:none}
+        @media(min-width:768px){.desktop{display:block}.mobile{display:none}.grid{grid-template-columns:repeat(4,1fr)}}
+        table{width:100%;border-collapse:separate;border-spacing:0 8px}
+        th{text-align:left;padding:12px 8px;font-size:.75rem;font-weight:700;color:#64748b;text-transform:uppercase}
+        td{padding:4px 8px}
+        tr{background:rgba(15,23,42,.6)}
+        td:first-child{border-radius:8px 0 0 8px}
+        td:last-child{border-radius:0 8px 8px 0}
+        td input{padding:10px 12px;background:transparent;border:1px solid transparent;border-radius:6px;color:var(--text);width:100%}
+        td input:focus{outline:none;background:rgba(30,41,59,.8);border-color:var(--primary)}
+        .sum{font-weight:700;color:var(--primary)}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 20px;border:none;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .3s;width:100%}
+        .btn-prim{background:linear-gradient(135deg,var(--primary),var(--purple));color:#fff;box-shadow:0 4px 15px rgba(59,130,246,.4)}
+        .btn-prim:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(59,130,246,.5)}
+        .btn-sec{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--border)}
+        .btn-sec:hover{background:rgba(255,255,255,.1)}
+        .btn-add{margin-top:16px;background:transparent;color:var(--success);border:2px dashed rgba(16,185,129,.3)}
+        .btn-add:hover{background:rgba(16,185,129,.1);border-style:solid}
+        .btn-del{background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.2);padding:8px 14px;font-size:.85rem;width:auto}
+        .results{background:linear-gradient(145deg,rgba(30,41,59,.9),rgba(15,23,42,.95));border:1px solid var(--border);border-radius:24px;padding:28px;margin-bottom:20px;position:relative;overflow:hidden}
+        .results::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--primary),var(--purple),var(--danger),transparent);animation:shimmer 3s infinite}
+        @keyframes shimmer{0%{left:-100%}100%{left:100%}}
+        .res-header{text-align:center;margin-bottom:24px}
+        .res-header h2{font-size:1.2rem;font-weight:700}
+        .res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+        @media(min-width:768px){.res-grid{grid-template-columns:repeat(5,1fr)}}
+        .res-item{background:rgba(15,23,42,.6);padding:16px 8px;border-radius:12px;text-align:center;border:1px solid var(--border)}
+        .res-label{font-size:.65rem;color:#64748b;margin-bottom:6px;text-transform:uppercase;font-weight:600}
+        .res-val{font-size:1.1rem;font-weight:700}
+        .final{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(139,92,246,.1));padding:28px;border-radius:20px;text-align:center;margin-bottom:24px;border:1px solid rgba(59,130,246,.2)}
+        .final-label{font-size:.85rem;color:var(--text-secondary);margin-bottom:8px;text-transform:uppercase;font-weight:600}
+        .final-val{font-size:clamp(2.2rem,7vw,3rem);font-weight:800;background:linear-gradient(to right,var(--text),var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .res-actions{display:flex;gap:12px}
+        .res-actions .btn{flex:1}
+        .analytics{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px}
+        .analytics h3{font-size:1.1rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+        .prog{margin-bottom:16px}
+        .prog-label{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:8px;color:var(--text-secondary);font-weight:600}
+        .prog-bar{height:28px;background:rgba(15,23,42,.6);border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+        .prog-fill{height:100%;border-radius:8px;display:flex;align-items:center;padding:0 12px;font-size:.75rem;font-weight:700;color:#fff;transition:width .8s ease}
+        .prog-blue{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+        .prog-green{background:linear-gradient(90deg,#10b981,#34d399)}
+        .prog-orange{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+        .tip{background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(236,72,153,.1));border:1px solid rgba(245,158,11,.2);padding:16px;border-radius:12px;margin-top:16px;font-size:.9rem;color:var(--text-secondary)}
+        .tip strong{color:var(--warning)}
+        .quick{background:linear-gradient(145deg,rgba(16,185,129,.1),rgba(59,130,246,.1));border:1px solid rgba(16,185,129,.2);border-radius:24px;padding:28px}
+        .quick h2{font-size:1.4rem;font-weight:700;margin-bottom:6px;color:var(--success)}
+        .quick p{color:var(--text-secondary);margin-bottom:24px}
+        .quick .field label{color:var(--success)}
+        .quick-res{background:rgba(15,23,42,.8);border:2px solid var(--success);border-radius:20px;padding:24px;text-align:center;margin-top:24px;display:none}
+        .quick-res-val{font-size:2.5rem;font-weight:800;color:var(--success)}
+        .hist-item{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .3s}
+        .hist-item:hover{transform:translateX(8px);border-color:var(--primary);box-shadow:0 10px 30px rgba(59,130,246,.2)}
+        .hist-info h3{font-size:1rem;font-weight:700;margin-bottom:4px}
+        .hist-info p{font-size:.8rem;color:#64748b}
+        .hist-price{font-size:1.2rem;font-weight:700;color:var(--success)}
+        .empty{text-align:center;padding:60px 20px;color:#64748b}
+        .tmpl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+        @media(min-width:768px){.tmpl-grid{grid-template-columns:repeat(4,1fr)}}
+        .tmpl{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 16px;text-align:center;cursor:pointer;transition:all .4s}
+        .tmpl:hover{transform:translateY(-8px);border-color:var(--primary);box-shadow:0 20px 40px rgba(59,130,246,.3)}
+        .tmpl-icon{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--primary);font-size:1.5rem;transition:all .3s}
+        .tmpl:hover .tmpl-icon{transform:scale(1.1);box-shadow:0 0 30px rgba(59,130,246,.3)}
+        .tmpl-name{font-weight:700;font-size:.95rem}
+        .toast{position:fixed;bottom:120px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface);color:var(--text);padding:16px 28px;border-radius:16px;font-size:.95rem;font-weight:600;border:1px solid var(--border);box-shadow:0 20px 40px rgba(0,0,0,.4);opacity:0;transition:all .4s;z-index:1000}
+        .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
     </style>
 </head>
 <body>
+    <div class="bg"></div>
     <div class="toast" id="toast"></div>
-    <div class="header">
-        <h1>💰 Калькулятор Себестоимости</h1>
-        <span class="header-badge">PRO версия</span>
-    </div>
-    <div class="main-content">
-        <div id="tab-calculator" class="tab-content active">
+    
+    <header class="header">
+        <h1>CostCraft Pro</h1>
+        <div class="badge">Калькулятор себестоимости</div>
+    </header>
+
+    <nav class="nav">
+        <button class="nav-btn active" onclick="switchTab('calc',this)">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            <span>Калькулятор</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('quick',this)">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span>Быстро</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('hist',this)">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>История</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('tmpl',this)">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+            <span>Шаблоны</span>
+        </button>
+    </nav>
+
+    <main class="content">
+        <!-- Calculator -->
+        <div id="tab-calc" class="tab active">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title"><span class="icon icon-blue">⚙️</span>Основные параметры</div>
+                    <div class="card-icon"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+                    <div class="card-title">Основные параметры</div>
                 </div>
-                <div class="input-grid">
-                    <div class="input-field full-width">
-                        <label>Название изделия</label>
-                        <input type="text" id="productName" value="Песочник детский" oninput="calculate();autoSave()">
-                    </div>
-                    <div class="input-field">
-                        <label>Кол-во/мес</label>
-                        <input type="number" id="monthlyQuantity" value="4500" oninput="calculate();autoSave()">
-                    </div>
-                    <div class="input-field">
-                        <label>Маржа %</label>
-                        <input type="number" id="marginPercent" value="20" step="0.1" oninput="calculate();autoSave()">
-                    </div>
-                    <div class="input-field">
-                        <label>Курс USD</label>
-                        <input type="number" id="usdRate" value="87.8" step="0.1" oninput="renderAll();calculate();autoSave()">
-                    </div>
+                <div class="grid">
+                    <div class="field full"><label>Название изделия</label><input type="text" id="productName" value="Песочник детский" oninput="calculate();save()"></div>
+                    <div class="field"><label>Кол-во/мес</label><input type="number" id="monthlyQuantity" value="4500" oninput="calculate();save()"></div>
+                    <div class="field"><label>Маржа %</label><input type="number" id="marginPercent" value="20" step="0.1" oninput="calculate();save()"></div>
+                    <div class="field"><label>Курс USD</label><input type="number" id="usdRate" value="87.8" step="0.1" oninput="render();calculate();save()"></div>
                 </div>
             </div>
+
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title"><span class="icon icon-green">🧵</span>Материалы</div>
+                    <div class="card-icon green"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg></div>
+                    <div class="card-title">Материалы</div>
                 </div>
-                <div class="mobile-cards" id="materialsMobile"></div>
-                <div class="desktop-table">
-                    <table><thead><tr><th>Название</th><th>Расход</th><th>Ед.</th><th>Цена</th><th>USD</th><th>Сумма</th><th></th></tr></thead><tbody id="materialsTable"></tbody></table>
+                <div class="mobile" id="materialsMobile"></div>
+                <div class="desktop">
+                    <table>
+                        <thead><tr><th>Название</th><th>Расход</th><th>Ед.</th><th>Цена</th><th>USD</th><th>Сумма</th><th></th></tr></thead>
+                        <tbody id="materialsTable"></tbody>
+                    </table>
                 </div>
                 <button class="btn btn-add" onclick="addMaterial()">+ Добавить материал</button>
             </div>
+
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title"><span class="icon icon-orange">✂️</span>Сдельные работы</div>
+                    <div class="card-icon orange"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"/></svg></div>
+                    <div class="card-title">Сдельные работы</div>
                 </div>
-                <div class="mobile-cards" id="operationsMobile"></div>
-                <div class="desktop-table">
-                    <table><thead><tr><th>Операция</th><th>Стоимость</th><th></th></tr></thead><tbody id="operationsTable"></tbody></table>
+                <div class="mobile" id="operationsMobile"></div>
+                <div class="desktop">
+                    <table>
+                        <thead><tr><th>Операция</th><th>Стоимость</th><th></th></tr></thead>
+                        <tbody id="operationsTable"></tbody>
+                    </table>
                 </div>
                 <button class="btn btn-add" onclick="addOperation()">+ Добавить операцию</button>
             </div>
+
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title"><span class="icon icon-purple">🏢</span>Админ. расходы</div>
+                    <div class="card-icon purple"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
+                    <div class="card-title">Админ. расходы</div>
                 </div>
-                <div class="mobile-cards" id="adminMobile"></div>
-                <div class="desktop-table">
-                    <table><thead><tr><th>Статья</th><th>Сумма/мес</th><th></th></tr></thead><tbody id="adminTable"></tbody></table>
+                <div class="mobile" id="adminMobile"></div>
+                <div class="desktop">
+                    <table>
+                        <thead><tr><th>Статья</th><th>Сумма/мес</th><th></th></tr></thead>
+                        <tbody id="adminTable"></tbody>
+                    </table>
                 </div>
                 <button class="btn btn-add" onclick="addAdmin()">+ Добавить статью</button>
             </div>
-            <div class="results-card">
-                <div class="results-header"><h2>📊 Результаты расчета</h2></div>
-                <div class="results-grid">
-                    <div class="result-item"><div class="result-label">Материалы</div><div class="result-value" id="resMaterials">0</div></div>
-                    <div class="result-item"><div class="result-label">Работы</div><div class="result-value" id="resOperations">0</div></div>
-                    <div class="result-item"><div class="result-label">Админ</div><div class="result-value" id="resAdmin">0</div></div>
-                    <div class="result-item"><div class="result-label">Себест.</div><div class="result-value" id="resCost">0</div></div>
-                    <div class="result-item"><div class="result-label">Маржа</div><div class="result-value" id="resMargin">0</div></div>
+
+            <div class="results">
+                <div class="res-header"><h2>Результаты расчета</h2></div>
+                <div class="res-grid">
+                    <div class="res-item"><div class="res-label">Материалы</div><div class="res-val" id="resMaterials">0</div></div>
+                    <div class="res-item"><div class="res-label">Работы</div><div class="res-val" id="resOperations">0</div></div>
+                    <div class="res-item"><div class="res-label">Админ</div><div class="res-val" id="resAdmin">0</div></div>
+                    <div class="res-item"><div class="res-label">Себест.</div><div class="res-val" id="resCost">0</div></div>
+                    <div class="res-item"><div class="res-label">Маржа</div><div class="res-val" id="resMargin">0</div></div>
                 </div>
-                <div class="final-price-box">
-                    <div class="final-price-label">Итоговая цена</div>
-                    <div class="final-price-value" id="finalPrice">0 сом</div>
+                <div class="final">
+                    <div class="final-label">Итоговая цена</div>
+                    <div class="final-val" id="finalPrice">0 сом</div>
                 </div>
-                <div class="results-actions">
-                    <button class="btn btn-primary" onclick="saveToHistory()">💾 Сохранить</button>
-                    <button class="btn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2)" onclick="exportData()">📥 Экспорт</button>
+                <div class="res-actions">
+                    <button class="btn btn-prim" onclick="saveToHistory()">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                        Сохранить
+                    </button>
+                    <button class="btn btn-sec" onclick="exportData()">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Экспорт
+                    </button>
                 </div>
             </div>
-            <div class="analytics-card">
-                <div class="analytics-title">Аналитика затрат</div>
+
+            <div class="analytics">
+                <h3><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Аналитика затрат</h3>
                 <div id="analytics"></div>
             </div>
         </div>
-        <div id="tab-quick" class="tab-content">
-            <div class="quick-card">
-                <div class="quick-header"><h2>⚡ Быстрый расчёт</h2><p>5 полей — 30 секунд — готово!</p></div>
-                <div class="quick-inputs">
-                    <div class="input-grid">
-                        <div class="input-field full-width"><label>Название</label><input type="text" id="qName" value="Новое изделие"></div>
-                        <div class="input-field"><label>Ткань (м)</label><input type="number" id="qFabric" value="2" step="0.1"></div>
-                        <div class="input-field"><label>Цена ткани (USD)</label><input type="number" id="qPrice" value="2" step="0.1"></div>
-                        <div class="input-field"><label>Пошив (сом)</label><input type="number" id="qWork" value="80"></div>
-                        <div class="input-field"><label>Маржа %</label><input type="number" id="qMargin" value="20"></div>
-                    </div>
+
+        <!-- Quick -->
+        <div id="tab-quick" class="tab">
+            <div class="quick">
+                <h2>Быстрый расчёт</h2>
+                <p>5 полей — 30 секунд — готово!</p>
+                <div class="grid">
+                    <div class="field full"><label>Название</label><input type="text" id="qName" value="Новое изделие"></div>
+                    <div class="field"><label>Ткань (м)</label><input type="number" id="qFabric" value="2" step="0.1"></div>
+                    <div class="field"><label>Цена ткани (USD)</label><input type="number" id="qPrice" value="2" step="0.1"></div>
+                    <div class="field"><label>Пошив (сом)</label><input type="number" id="qWork" value="80"></div>
+                    <div class="field"><label>Маржа %</label><input type="number" id="qMargin" value="20"></div>
                 </div>
-                <button class="btn btn-success" style="margin-top:20px" onclick="quickCalc()">🚀 Рассчитать цену</button>
-                <div class="quick-result" id="quickResult">
+                <button class="btn btn-prim" style="margin-top:20px;background:linear-gradient(135deg,var(--success),#059669)" onclick="quickCalc()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    Рассчитать цену
+                </button>
+                <div class="quick-res" id="quickResult">
                     <div style="font-size:.9rem;color:var(--text-secondary);margin-bottom:8px">Рекомендуемая цена</div>
-                    <div class="quick-result-value" id="quickPrice">0 сом</div>
+                    <div class="quick-res-val" id="quickPrice">0 сом</div>
                 </div>
             </div>
         </div>
-        <div id="tab-history" class="tab-content">
-            <div class="card" style="background:transparent;border:none;padding:0">
-                <div class="card-header" style="padding:0 0 20px 0">
-                    <div class="card-title"><span class="icon icon-blue" style="box-shadow:0 0 20px rgba(0,212,255,0.3)">📁</span>История расчетов</div>
-                </div>
-                <div id="historyList"><div class="empty-state"><div class="empty-state-icon">📂</div><p>История пуста</p><p style="font-size:.85rem;margin-top:8px">Сохраняйте расчеты, чтобы они появились здесь</p></div></div>
-            </div>
-        </div>
-        <div id="tab-templates" class="tab-content">
-            <div class="card" style="background:transparent;border:none;padding:0">
-                <div class="card-header" style="padding:0 0 20px 0">
-                    <div class="card-title"><span class="icon icon-purple" style="box-shadow:0 0 20px rgba(184,41,221,0.3)">📋</span>Готовые шаблоны</div>
-                </div>
-                <p style="color:var(--text-secondary);margin-bottom:20px;font-size:.95rem">Выберите шаблон для мгновенного заполнения</p>
-                <div class="template-grid">
-                    <div class="template-card" onclick="loadTemplate('песочник')"><div class="template-icon">👶</div><div class="template-name">Песочник</div></div>
-                    <div class="template-card" onclick="loadTemplate('боди')"><div class="template-icon">👕</div><div class="template-name">Боди</div></div>
-                    <div class="template-card" onclick="loadTemplate('комбинезон')"><div class="template-icon">🧥</div><div class="template-name">Комбинезон</div></div>
-                    <div class="template-card" onclick="loadTemplate('футболка')"><div class="template-icon">👚</div><div class="template-name">Футболка</div></div>
+
+        <!-- History -->
+        <div id="tab-hist" class="tab">
+            <div id="historyList">
+                <div class="empty">
+                    <div style="font-size:3rem;margin-bottom:16px;opacity:.5">📂</div>
+                    <p>История пуста</p>
+                    <p style="font-size:.85rem;margin-top:8px">Сохраняйте расчеты, чтобы они появились здесь</p>
                 </div>
             </div>
         </div>
-    </div>
-    <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('calculator',this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg><span>Калькулятор</span></button>
-        <button class="nav-item" onclick="switchTab('quick',this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg><span>Быстро</span></button>
-        <button class="nav-item" onclick="switchTab('history',this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>История</span></button>
-        <button class="nav-item" onclick="switchTab('templates',this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg><span>Шаблоны</span></button>
-    </nav>
+
+        <!-- Templates -->
+        <div id="tab-tmpl" class="tab">
+            <p style="color:var(--text-secondary);margin-bottom:20px">Выберите шаблон для мгновенного заполнения</p>
+            <div class="tmpl-grid">
+                <div class="tmpl" onclick="loadTemplate('песочник')">
+                    <div class="tmpl-icon">👶</div>
+                    <div class="tmpl-name">Песочник</div>
+                </div>
+                <div class="tmpl" onclick="loadTemplate('боди')">
+                    <div class="tmpl-icon">👕</div>
+                    <div class="tmpl-name">Боди</div>
+                </div>
+                <div class="tmpl" onclick="loadTemplate('комбинезон')">
+                    <div class="tmpl-icon">🧥</div>
+                    <div class="tmpl-name">Комбинезон</div>
+                </div>
+                <div class="tmpl" onclick="loadTemplate('футболка')">
+                    <div class="tmpl-icon">👚</div>
+                    <div class="tmpl-name">Футболка</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+<script>
+let materials=[],operations=[],adminCosts=[],historyData=[];
+const templates={'песочник':{name:'Песочник детский',materials:[{name:'Ткань основная',quantity:2.3,unit:'м',price:2,isUSD:true},{name:'Упаковочный пакет',quantity:1,unit:'шт',price:5,isUSD:false},{name:'Нитки',quantity:1,unit:'шт',price:1,isUSD:false},{name:'Резинка',quantity:1,unit:'м',price:3,isUSD:false},{name:'Бирка',quantity:1,unit:'шт',price:2,isUSD:false}],operations:[{name:'Прямострочка',price:65},{name:'Крой',price:10},{name:'Чистка',price:2},{name:'Упаковка',price:4},{name:'ОТК',price:3}],admin:[{name:'Оклады',amount:245000},{name:'Аренда',amount:50000},{name:'Коммуналка',amount:10000},{name:'Бензин',amount:15000},{name:'Доставка',amount:2000},{name:'Маркетинг',amount:90000}]},'боди':{name:'Боди детское',materials:[{name:'Трикотаж',quantity:1.5,unit:'м',price:3,isUSD:true},{name:'Кнопки',quantity:3,unit:'шт',price:2,isUSD:false}],operations:[{name:'Оверлок',price:40},{name:'Крой',price:8},{name:'Упаковка',price:3}],admin:[{name:'Оклады',amount:200000},{name:'Аренда',amount:50000},{name:'Коммуналка',amount:10000}]},'комбинезон':{name:'Комбинезон',materials:[{name:'Ткань',quantity:3.5,unit:'м',price:4,isUSD:true},{name:'Молния',quantity:1,unit:'шт',price:15,isUSD:false}],operations:[{name:'Прямострочка',price:90},{name:'Крой',price:15},{name:'Упаковка',price:5}],admin:[{name:'Оклады',amount:250000},{name:'Аренда',amount:50000},{name:'Коммуналка',amount:10000}]},'футболка':{name:'Футболка',materials:[{name:'Трикотаж',quantity:1.2,unit:'м',price:2.5,isUSD:true}],operations:[{name:'Оверлок',price:35},{name:'Крой',price:5},{name:'Упаковка',price:2}],admin:[{name:'Оклады',amount:180000},{name:'Аренда',amount:40000},{name:'Коммуналка',amount:8000}]}};
+
+document.addEventListener('DOMContentLoaded',()=>{load();render();calc();loadHist()});
+function switchTab(t,b){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.getElementById('tab-'+t).classList.add('active');b.classList.add('active');if(t==='hist')loadHist()}
+function loadTemplate(type){const tpl=templates[type];document.getElementById('productName').value=tpl.name;materials=JSON.parse(JSON.stringify(tpl.materials));operations=JSON.parse(JSON.stringify(tpl.operations));adminCosts=JSON.parse(JSON.stringify(tpl.admin));render();calc();save();switchTab('calc',document.querySelector('.nav-btn'));showToast('Шаблон загружен: '+tpl.name)}
+function render(){renderMatMob();renderMatDesk();renderOpMob();renderOpDesk();renderAdmMob();renderAdmDesk()}
+function renderMatMob(){const c=document.getElementById('materialsMobile'),u=parseFloat(document.getElementById('usdRate').value)||0;c.innerHTML=materials.map((m,i)=>{const s=m.quantity*m.price*(m.isUSD?u:1);return`<div class="item"><div class="item-header"><span class="item-title">Материал #${i+1}</span><button class="item-del" onclick="materials.splice(${i},1);render();calc();save()">×</button></div><div class="item-row"><div class="item-field" style="grid-column:1/-1"><label>Название</label><input value="${e(m.name)}" oninput="materials[${i}].name=this.value;save()"></div></div><div class="item-row"><div class="item-field"><label>Расход</label><input type="number" value="${m.quantity}" step="0.01" oninput="materials[${i}].quantity=parseFloat(this.value)||0;render();calc();save()"></div><div class="item-field"><label>Ед.</label><input value="${e(m.unit)}" oninput="materials[${i}].unit=this.value;save()"></div></div><div class="item-row"><div class="item-field"><label>Цена</label><input type="number" value="${m.price}" step="0.01" oninput="materials[${i}].price=parseFloat(this.value)||0;render();calc();save()"></div><div class="item-field" style="display:flex;align-items:flex-end;padding-bottom:8px"><div class="item-check"><input type="checkbox" id="u${i}" ${m.isUSD?'checked':''} onchange="materials[${i}].isUSD=this.checked;render();calc();save()"><label for="u${i}">USD</label></div></div></div><div class="item-sum">${s.toFixed(2)} сом</div></div>`}).join('')}
+function renderOpMob(){document.getElementById('operationsMobile').innerHTML=operations.map((o,i)=>`<div class="item"><div class="item-header"><span class="item-title">Операция #${i+1}</span><button class="item-del" onclick="operations.splice(${i},1);render();calc();save()">×</button></div><div class="item-row"><div class="item-field" style="grid-column:1/-1"><label>Название</label><input value="${e(o.name)}" oninput="operations[${i}].name=this.value;save()"></div></div><div class="item-row"><div class="item-field"><label>Стоимость</label><input type="number" value="${o.price}" step="0.01" oninput="operations[${i}].price=parseFloat(this.value)||0;calc();save()"></div></div></div>`).join('')}
+function renderAdmMob(){document.getElementById('adminMobile').innerHTML=adminCosts.map((a,i)=>`<div class="item"><div class="item-header"><span class="item-title">Статья #${i+1}</span><button class="item-del" onclick="adminCosts.splice(${i},1);render();calc();save()">×</button></div><div class="item-row"><div class="item-field" style="grid-column:1/-1"><label>Название</label><input value="${e(a.name)}" oninput="adminCosts[${i}].name=this.value;save()"></div></div><div class="item-row"><div class="item-field"><label>Сумма/мес</label><input type="number" value="${a.amount}" step="100" oninput="adminCosts[${i}].amount=parseFloat(this.value)||0;calc();save()"></div></div></div>`).join('')}
+function renderMatDesk(){const t=document.getElementById('materialsTable'),u=parseFloat(document.getElementById('usdRate').value)||0;t.innerHTML=materials.map((m,i)=>`<tr><td><input value="${e(m.name)}" oninput="materials[${i}].name=this.value;save()"></td><td><input type="number" value="${m.quantity}" step="0.01" oninput="materials[${i}].quantity=parseFloat(this.value)||0;render();calc();save()"></td><td><input value="${e(m.unit)}" oninput="materials[${i}].unit=this.value;save()"></td><td><input type="number" value="${m.price}" step="0.01" oninput="materials[${i}].price=parseFloat(this.value)||0;render();calc();save()"></td><td style="text-align:center"><input type="checkbox" ${m.isUSD?'checked':''} onchange="materials[${i}].isUSD=this.checked;render();calc();save()"></td><td class="sum">${(m.quantity*m.price*(m.isUSD?u:1)).toFixed(2)}</td><td><button class="btn btn-del" onclick="materials.splice(${i},1);render();calc();save()">×</button></td></tr>`).join('')}
+function renderOpDesk(){document.getElementById('operationsTable').innerHTML=operations.map((o,i)=>`<tr><td><input value="${e(o.name)}" oninput="operations[${i}].name=this.value;save()"></td><td><input type="number" value="${o.price}" step="0.01" oninput="operations[${i}].price=parseFloat(this.value)||0;calc();save()"></td><td><button class="btn btn-del" onclick="operations.splice(${i},1);render();calc();save()">×</button></td></tr>`).join('')}
+function renderAdmDesk(){document.getElementById('adminTable').innerHTML=adminCosts.map((a,i)=>`<tr><td><input value="${e(a.name)}" oninput="adminCosts[${i}].name=this.value;save()"></td><td><input type="number" value="${a.amount}" step="100" oninput="adminCosts[${i}].amount=parseFloat(this.value)||0;calc();save()"></td><td><button class="btn btn-del" onclick="adminCosts.splice(${i},1);render();calc();save()">×</button></td></tr>`).join('')}
+function addMaterial(){materials.push({name:'Новый материал',quantity:1,unit:'шт',price:0,isUSD:false});render();calc();save()}
+function addOperation(){operations.push({name:'Новая операция',price:0});render();calc();save()}
+function addAdmin(){adminCosts.push({name:'Новая статья',amount:0});render();calc();save()}
+function calc(){const u=parseFloat(document.getElementById('usdRate').value)||0,q=parseFloat(document.getElementById('monthlyQuantity').value)||1,p=parseFloat(document.getElementById('marginPercent').value)||0,m=materials.reduce((s,x)=>s+x.quantity*x.price*(x.isUSD?u:1),0),o=operations.reduce((s,x)=>s+x.price,0),a=adminCosts.reduce((s,x)=>s+x.amount,0),ap=a/q,c=m+o+ap,mg=c*(p/100),f=c+mg;document.getElementById('resMaterials').textContent=m.toFixed(2);document.getElementById('resOperations').textContent=o.toFixed(2);document.getElementById('resAdmin').textContent=ap.toFixed(2);document.getElementById('resCost').textContent=c.toFixed(2);document.getElementById('resMargin').textContent=mg.toFixed(2);document.getElementById('finalPrice').textContent=f.toFixed(2)+' сом';renderAnalytics(m,o,ap,c)}
+function renderAnalytics(mt,op,ad,tt){const mp=tt>0?(mt/tt*100).toFixed(1):0,opp=tt>0?(op/tt*100).toFixed(1):0,ap=tt>0?(ad/tt*100).toFixed(1):0;let t='';if(mp>60)t=`<div class="tip"><strong>Материалы ${mp}%</strong> — ищите выгодных поставщиков</div>`;else if(opp>40)t=`<div class="tip"><strong>Работы ${opp}%</strong> — оптимизируйте процесс</div>`;else if(ap>30)t=`<div class="tip"><strong>Админ ${ap}%</strong> — увеличьте объём</div>`;document.getElementById('analytics').innerHTML=`<div class="prog"><div class="prog-label"><span>Материалы</span><span>${mp}%</span></div><div class="prog-bar"><div class="prog-fill prog-blue" style="width:${mp}%"></div></div></div><div class="prog"><div class="prog-label"><span>Работы</span><span>${opp}%</span></div><div class="prog-bar"><div class="prog-fill prog-green" style="width:${opp}%"></div></div></div><div class="prog"><div class="prog-label"><span>Админ</span><span>${ap}%</span></div><div class="prog-bar"><div class="prog-fill prog-orange" style="width:${ap}%"></div></div></div>${t}`}
+function quickCalc(){const f=parseFloat(document.getElementById('qFabric').value)||0,p=parseFloat(document.getElementById('qPrice').value)||0,w=parseFloat(document.getElementById('qWork').value)||0,m=parseFloat(document.getElementById('qMargin').value)||0,u=parseFloat(document.getElementById('usdRate').value)||87.8,mc=f*p*u,ap=adminCosts.length>0?adminCosts.reduce((s,a)=>s+a.amount,0)/(parseFloat(document.getElementById('monthlyQuantity').value)||4500):90,c=mc+w+ap,fn=c*(1+m/100);document.getElementById('quickResult').style.display='block';document.getElementById('quickPrice').textContent=fn.toFixed(2)+' сом'}
+function save(){localStorage.setItem('calc',JSON.stringify({productName:document.getElementById('productName').value,monthlyQuantity:document.getElementById('monthlyQuantity').value,marginPercent:document.getElementById('marginPercent').value,usdRate:document.getElementById('usdRate').value,materials,operations,adminCosts}))}
+function load(){const s=localStorage.getItem('calc');if(s){const d=JSON.parse(s);document.getElementById('productName').value=d.productName||'';document.getElementById('monthlyQuantity').value=d.monthlyQuantity||4500;document.getElementById('marginPercent').value=d.marginPercent||20;document.getElementById('usdRate').value=d.usdRate||87.8;materials=d.materials||[];operations=d.operations||[];adminCosts=d.adminCosts||[]}else loadTemplate('песочник')}
+function saveToHistory(){const h=JSON.parse(localStorage.getItem('history')||'[]'),i={id:Date.now(),date:new Date().toLocaleDateString('ru-RU'),time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}),name:document.getElementById('productName').value||'Без названия',price:document.getElementById('finalPrice').textContent,data:{productName:document.getElementById('productName').value,monthlyQuantity:document.getElementById('monthlyQuantity').value,marginPercent:document.getElementById('marginPercent').value,usdRate:document.getElementById('usdRate').value,materials:JSON.parse(JSON.stringify(materials)),operations:JSON.parse(JSON.stringify(operations)),adminCosts:JSON.parse(JSON.stringify(adminCosts))}};h.unshift(i);localStorage.setItem('history',JSON.stringify(h.slice(0,20)));showToast('Сохранено в историю')}
+function loadHist(){const h=JSON.parse(localStorage.getItem('history')||'[]');historyData=h;const c=document.getElementById('historyList');if(h.length===0){c.innerHTML='<div class="empty"><div style="font-size:3rem;margin-bottom:16px;opacity:.5">📂</div><p>История пуста</p><p style="font-size:.85rem;margin-top:8px">Сохраняйте расчеты, чтобы они появились здесь</p></div>';return}c.innerHTML=h.map((x,i)=>`<div class="hist-item" onclick="loadHistItem(${i})"><div class="hist-info"><h3>${e(x.name)}</h3><p>${x.date} ${x.time}</p></div><div class="hist-price">${x.price}</div></div>`).join('')}
+function loadHistItem(i){const x=historyData[i];if(!x||!x.data)return;document.getElementById('productName').value=x.data.productName;document.getElementById('monthlyQuantity').value=x.data.monthlyQuantity;document.getElementById('marginPercent').value=x.data.marginPercent;document.getElementById('usdRate').value=x.data.usdRate;materials=JSON.parse(JSON.stringify(x.data.materials));operations=JSON.parse(JSON.stringify(x.data.operations));adminCosts=JSON.parse(JSON.stringify(x.data.adminCosts));render();calc();save();switchTab('calc',document.querySelector('.nav-btn'));showToast('Расчёт загружен')}
+function exportData(){const d={изделие:document.getElementById('productName').value,дата:new Date().toLocaleString('ru-RU'),параметры:{количествоВМесяц:document.getElementById('monthlyQuantity').value,маржаПроцент:document.getElementById('marginPercent').value,курсUSD:document.getElementById('usdRate').value},материалы:materials,сдельныеРаботы:operations,админРасходы:adminCosts,результаты:{материалы:document.getElementById('resMaterials').textContent+' сом',работы:document.getElementById('resOperations').textContent+' сом',админНа1шт:document.getElementById('resAdmin').textContent+' сом',себестоимость:document.getElementById('resCost').textContent+' сом',маржа:document.getElementById('resMargin').textContent+' сом',итоговаяЦена:document.getElementById('finalPrice').textContent}};const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=`Себестоимость_${(d.изделие||'расчет').replace(/[^a-zA-Z0-9а-яА-Я]/g,'_')}_${new Date().toISOString().split('T')[0]}.json`;a.click();URL.revokeObjectURL(u);showToast('Файл скачан')}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function e(t){return t?t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'):''}
+</script>
+</body>
+</html>
