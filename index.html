@@ -18,6 +18,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica N
 .petal{position:fixed;pointer-events:none;z-index:10;opacity:.8;animation:fall linear infinite}
 @keyframes fall{0%{transform:translateY(-30px) rotate(0deg)}100%{transform:translateY(110vh) rotate(360deg)}}
 
+/* LOCKER */
+.locker{position:fixed;inset:0;z-index:9999;background:linear-gradient(180deg,var(--r1)0%,var(--r2)100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;transition:opacity 1.5s,visibility 1.5s}
+.locker.hidden{opacity:0;visibility:hidden;pointer-events:none}
+
+.heart-box{position:relative;width:160px;height:140px;margin-bottom:40px}
+.heart-svg{width:100%;height:100%;filter:drop-shadow(0 0 40px rgba(255,107,138,.5));animation:hb 2s ease-in-out infinite}
+@keyframes hb{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.heart-svg path{fill:var(--r4)}
+.heart-glow{position:absolute;inset:-30px;background:radial-gradient(circle,rgba(255,107,138,.3)0%,transparent60%);animation:pulse 3s ease-in-out infinite;border-radius:50%}
+
+.timer-wrap{text-align:center;margin-bottom:50px}
+.timer{font-size:clamp(3rem,10vw,5rem);font-weight:300;color:var(--r4);font-variant-numeric:tabular-nums;text-shadow:0 0 30px rgba(255,107,138,.3);letter-spacing:-2px;line-height:1}
+.timer-label{font-size:.8rem;color:var(--t1);opacity:.6;margin-top:15px;text-transform:uppercase;letter-spacing:3px}
+
+.sakura-text{text-align:center;max-width:300px}
+.sakura-text p{font-size:1.1rem;color:var(--t1);opacity:.85;font-style:italic;line-height:1.9;margin-bottom:10px}
+.sakura-text .accent{color:var(--r4);font-weight:500;font-size:1rem;margin-bottom:15px}
+
+.unlock-anim .heart-box{animation:uheart 1.5s ease forwards}
+@keyframes uheart{0%{transform:scale(1);opacity:1}50%{transform:scale(1.3);opacity:.5}100%{transform:scale(2.5);opacity:0}}
+
+.content{opacity:0;transition:opacity 2s ease;pointer-events:none}
+.content.visible{opacity:1;pointer-events:all}
+
 .section{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:60px 20px;position:relative}
 .container{width:100%;max-width:800px;margin:0 auto}
 
@@ -100,6 +124,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica N
 .reveal.active{opacity:1;transform:translateY(0)}
 
 @media(max-width:480px){
+.heart-box{width:130px;height:115px}
+.timer{font-size:2.5rem}
+.sakura-text p{font-size:1rem}
 .card{padding:25px 15px}
 .card h3{font-size:1.2rem}
 .letter{padding:30px 20px}
@@ -112,6 +139,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica N
 <div class="bg"></div>
 <canvas id="cvs"></canvas>
 
+<!-- LOCKER -->
+<div class="locker" id="lock">
+<div class="heart-box">
+<div class="heart-glow"></div>
+<svg class="heart-svg" viewBox="0 0 100 90" preserveAspectRatio="xMidYMid meet">
+<path d="M50 80 C50 80 15 55 15 30 C15 15 25 10 35 10 C42 10 47 15 50 20 C53 15 58 10 65 10 C75 10 85 15 85 30 C85 55 50 80 50 80Z"/>
+</svg>
+</div>
+<div class="timer-wrap">
+<div class="timer" id="timer">00:00:00:00</div>
+<div class="timer-label">до весны и любви</div>
+</div>
+<div class="sakura-text">
+<p class="accent">Мы не успели в этом году<br>на цветение сакуры...</p>
+<p>Но скоро пойдём вместе.<br>Я обещаю.</p>
+</div>
+</div>
+
+<!-- CONTENT -->
+<div class="content" id="main">
 <section class="section hero" id="h">
 <div class="container">
 <h1>Зейнеп</h1>
@@ -201,6 +248,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica N
 </button>
 </div>
 </section>
+</div>
 
 <div class="modal" id="md" onclick="closeM(event)">
 <div class="modal-content" onclick="event.stopPropagation()">
@@ -217,8 +265,46 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica N
 
 <script>
 // ============================================
-// ЗДЕСЬ ВСТАВЛЯЙ ПУТИ К ФОТКАМ
-// Вариант 1: Локальные файлы (для Netlify)
+// ТАЙМЕР ДО 14 ФЕВРАЛЯ 2026 00:00 БИШКЕК (UTC+6)
+// ============================================
+const target=new Date("2026-02-14T00:00:00+06:00").getTime();
+const lock=document.getElementById("lock");
+const main=document.getElementById("main");
+const timerEl=document.getElementById("timer");
+
+function updateTimer(){
+const now=Date.now();
+const left=target-now;
+if(left<=0){unlock();return;}
+const d=Math.floor(left/864e5);
+const h=Math.floor((left%864e5)/36e5);
+const m=Math.floor((left%36e5)/6e4);
+const s=Math.floor((left%6e4)/1e3);
+timerEl.textContent=`${String(d).padStart(2,"0")}:${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+function unlock(){
+lock.classList.add("unlock-anim");
+setTimeout(()=>{
+lock.classList.add("hidden");
+main.classList.add("visible");
+initObs();
+},1500);
+}
+
+// Проверяем сразу
+if(Date.now()>=target){
+lock.style.display="none";
+main.classList.add("visible");
+initObs();
+}else{
+updateTimer();
+setInterval(updateTimer,1e3);
+}
+
+// ============================================
+// ФОТО — ВСТАВЬ СВОИ ПУТИ
+// ============================================
 const photos=[
 "assets/z1.jpg",  // улыбка
 "assets/z2.jpg",  // нежность
@@ -227,20 +313,11 @@ const photos=[
 "assets/z5.jpg",  // счастье
 "assets/z6.jpg"   // любовь
 ];
-
-// Вариант 2: Прямые ссылки (раскомментируй и вставь свои URL)
-// const photos=[
-// "https://i.imgur.com/abc123.jpg",
-// "https://i.imgur.com/def456.jpg",
-// "https://i.imgur.com/ghi789.jpg",
-// "https://i.imgur.com/jkl012.jpg",
-// "https://i.imgur.com/mno345.jpg",
-// "https://i.imgur.com/pqr678.jpg"
-// ];
-
 const labels=["улыбка","нежность","сила","дом","счастье","любовь"];
 
-// Canvas particles
+// ============================================
+// АНИМАЦИИ И ЭФФЕКТЫ
+// ============================================
 const cvs=document.getElementById("cvs");
 const ctx=cvs.getContext("2d");
 let pts=[];
@@ -281,7 +358,7 @@ pts.forEach(p=>{p.update();p.draw()});
 requestAnimationFrame(animate);
 }
 
-// Falling petals
+// Падающие лепестки
 function createPetal(){
 const p=document.createElement("div");
 p.className="petal";
@@ -300,7 +377,7 @@ setTimeout(()=>p.remove(),10e3);
 
 setInterval(createPetal,600);
 
-// Gallery
+// Галерея
 const gal=document.getElementById("gal");
 photos.forEach((src,i)=>{
 const div=document.createElement("div");
@@ -311,14 +388,16 @@ gal.appendChild(div);
 });
 
 // Intersection Observer
+function initObs(){
 const obs=new IntersectionObserver((es)=>es.forEach(e=>e.isIntersecting&&e.target.classList.add("active")),{threshold:.1});
 document.querySelectorAll(".reveal").forEach(el=>obs.observe(el));
+}
 
-// Modal
+// Модалка
 function openM(){document.getElementById("md").classList.add("active")}
 function closeM(e){if(!e||e.target.id==="md")document.getElementById("md").classList.remove("active")}
 
-// Init
+// Инициализация
 resize();
 initPts();
 animate();
